@@ -1,0 +1,73 @@
+/* ==================== GOOGLE FONTS IMPORTS ==================== */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400&display=swap');
+
+/* ==================== GLOBAL FONT APPLICATION ==================== */
+
+/* Apply Inter to body and all text elements by default */
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Apply Oswald to all headings */
+h1, h2, h3, h4, h5, h6,
+.heading,
+[class*="title"],
+[class*="heading"] {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+/* Apply Oswald to navigation */
+nav, 
+.navbar,
+.menu-item,
+.sidebar {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+/* Apply Oswald to buttons */
+button, 
+.btn,
+.button,
+[role="button"] {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+/* Apply Oswald to labels */
+label,
+.label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+/* Apply Oswald to footers */
+footer {
+    font-family: 'Inter', sans-serif;
+}
+
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer h6 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.font-oswald {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+}
+
+.font-inter {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
