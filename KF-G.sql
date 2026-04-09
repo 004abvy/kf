@@ -5,6 +5,83 @@
 -- 1. Create database and switch to it
 CREATE DATABASE Kfg;
 USE Kfg;
+
+
+
+
+
+
+
+
+
+
+
+
+-- 1. Add the image column to the Modifiers table
+ALTER TABLE Modifiers ADD COLUMN image_url VARCHAR(255) DEFAULT NULL;
+
+-- 2. Update the Modifiers with real images
+UPDATE Modifiers SET image_url = 'https://images.unsplash.com/photo-1472476443507-c7a5948772bf?w=600' WHERE name = 'Each Sauce (Nashville)';
+UPDATE Modifiers SET image_url = 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600' WHERE name = 'Extra Bread';
+UPDATE Modifiers SET image_url = 'https://images.unsplash.com/photo-1585238341267-1cb0a8d4d7ba?w=600' WHERE name = 'Extra Sauce';
+UPDATE Modifiers SET image_url = 'https://images.unsplash.com/photo-1562967914-608f82629710?w=600' WHERE name = 'Extra Chicken';
+UPDATE Modifiers SET image_url = 'https://static.tossdown.com/images/aea58297-7638-4970-9fb3-937fd9588b3b.webp' WHERE name = 'Extra Cheese';
+UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600' WHERE name = 'Extra Shawarma Bread';
+
+-- Note: Matching the exact spacing from your insert script for the fries
+UPDATE Modifiers SET image_url = 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600' WHERE name = 'Add Small  Crinkle Fries';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER TABLE Categories ADD COLUMN image_url VARCHAR(255) DEFAULT NULL;
+
+
+
+
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=800&q=80' WHERE name = 'Starters';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80' WHERE name = 'Main Course';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80' WHERE name = 'Rice';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80' WHERE name = 'Nashville & Loaded';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80' WHERE name = 'Burgers';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80' WHERE name = 'Sandwiches';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1524114664604-cd8133cd67ad?auto=format&fit=crop&w=800&q=80' WHERE name = 'Wings & Salads';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600' WHERE name = 'Platters & Shawarmas';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80' WHERE name = 'Pizzas';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' WHERE name = 'Pastas & Oven Baked';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' WHERE name = 'Fries';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1541745038731-f1c2b5a1a49e?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' WHERE name = 'Beverages';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' WHERE name = 'Shakes';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80' WHERE name = 'Margaritas & Juices';
+UPDATE Categories SET image_url = 'https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&w=800&q=80' WHERE name = 'Chillar';
+UPDATE Categories SET image_url = 'https://plus.unsplash.com/premium_photo-1683657860843-abae8aa03a64?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' WHERE name = 'Deals';
+
+
 ALTER TABLE OrderItems ADD COLUMN modifiers VARCHAR(255) DEFAULT NULL;
 INSERT INTO Modifiers (name, price, is_active) VALUES ('Extra Cheese', 80.00, TRUE);
 INSERT INTO Modifiers (name, price, is_active) VALUES ('Extra Shawarma Bread', 50.00, TRUE);
@@ -73,8 +150,8 @@ VALUES (3, 'Website System', 'web@kffastfood.com', 'dummy_hash', '0000', TRUE);
 
 
 -- 2. Disable safe updates and foreign key checks
-SET SQL_SAFE_UPDATES = 1;
-SET FOREIGN_KEY_CHECKS = 1;
+SET SQL_SAFE_UPDATES = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- 3. Drop all tables if they exist (order matters due to FK)
 DROP TABLE IF EXISTS OrderItemModifiers;
@@ -690,7 +767,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-159656054846
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600' WHERE item_id = 21; -- kf loaded fries
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600' WHERE item_id = 22; -- hot cheeto burrito
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600' WHERE item_id = 23; -- nashville burrito
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1641673275926-e6dd53f7e4d0?w=600' WHERE item_id = 24; -- kf nashville
+UPDATE MenuItems SET image_url = 'https://www.seriouseats.com/thmb/zZLQZ3IvBpcq-NfahgHLZYwvbwg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20231117-SEA-NashvilleHotChicken-VictorProtasio-01-83231777673a434fa85b8f0ef524b4c9.jpg' WHERE item_id = 24; -- kf nashville
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600' WHERE item_id = 25; -- kzing
 
 -- 5. BURGERS
@@ -708,7 +785,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-148107055572
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600' WHERE item_id = 35; -- club sandwich
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=600' WHERE item_id = 36; -- chicken cheese sandwich
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600' WHERE item_id = 37; -- euro sandwich
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1504515252342-f56f6e18e5c3?w=600' WHERE item_id = 38; -- mexican cheese sandwich
+UPDATE MenuItems SET image_url = 'https://www.seriouseats.com/thmb/BPEON1Ct7wNBA7rRHV4lBuGgGps=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20240304-SEA-Pambazo-Lorena-Masso-28-aa0abb8c8a384c968dc3045471dbd876.jpg' WHERE item_id = 38; -- mexican cheese sandwich
 
 -- 7. WINGS & SALADS
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600' WHERE item_id = 39; -- signature wings
@@ -722,7 +799,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1548943487-a
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1606728035253-49e8a23146de?w=600' WHERE item_id = 45; -- chicken platter
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1619895092538-128341789043?w=600' WHERE item_id = 46; -- cheese platter
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600' WHERE item_id = 47; -- chicken shawarma
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1642951988052-35d45a3ed4e3?w=600' WHERE item_id = 48; -- cheese shawarma
+UPDATE MenuItems SET image_url = 'https://media-cdn.tripadvisor.com/media/photo-s/1c/d4/5e/b1/mushroom-chick-shawarma.jpg' WHERE item_id = 48; -- cheese shawarma
 
 -- 9. PIZZAS
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600' WHERE item_id = 49; -- chicken tikka pizza
@@ -738,7 +815,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-159356070892
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=600' WHERE item_id = 59; -- kf special pizza
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600' WHERE item_id = 60; -- malai boti pizza
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600' WHERE item_id = 61; -- mexican pizza
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1585325701165-f1a4d3e81e36?w=600' WHERE item_id = 62; -- kabab stuffer
+UPDATE MenuItems SET image_url = 'https://g-cdn.blinkco.io/ordering-system/55812/dish_image/1733124920.png' WHERE item_id = 62; -- kabab stuffer
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1506354666786-959d6d497f1a?w=600' WHERE item_id = 63; -- cheese stuffer
 
 -- 10. PASTAS & OVEN BAKED
@@ -746,7 +823,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-160336094636
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1600803907087-f56d462fd26b?w=600' WHERE item_id = 65; -- chicken cheesy roll
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600' WHERE item_id = 66; -- crunchy chicken pasta
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600' WHERE item_id = 67; -- creamy pasta
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1612370815901-4a1ba21d1853?w=600' WHERE item_id = 68; -- macaroni pasta
+UPDATE MenuItems SET image_url = 'https://www.funfoodfrolic.com/wp-content/uploads/2021/08/Macaroni-Thumbnail-Blog-500x375.jpg' WHERE item_id = 68; -- macaroni pasta
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600' WHERE item_id = 69; -- oven baked wings
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600' WHERE item_id = 70; -- malai boti rolls
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600' WHERE item_id = 71; -- chicken spin rolls
@@ -758,41 +835,41 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-157610723268
 
 -- 12. BEVERAGES
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600' WHERE item_id = 75; -- water bottle
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1625772452859-1c03d884dcd7?w=600' WHERE item_id = 76; -- drink glass
+UPDATE MenuItems SET image_url = 'https://jodiabaazar.com/cdn/shop/files/coke250glass.jpg?v=1695053728&width=1445' WHERE item_id = 76; -- drink glass
 
 -- 13. SHAKES
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600' WHERE item_id = 77; -- oreo shake
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1572490122747-3e9197aa173f?w=600' WHERE item_id = 78; -- chocolate shake
+UPDATE MenuItems SET image_url = 'https://cdn.sanity.io/images/5dqbssss/production-v4/3ba3f137c02a6f320c156bb7c39e362bdbd87bb8-1356x1576.jpg' WHERE item_id = 78; -- chocolate shake
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600' WHERE item_id = 79; -- strawberry shake
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600' WHERE item_id = 80; -- pink barbie shake
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1534352956036-cd81e27dd615?w=600' WHERE item_id = 81; -- cold coffee
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600' WHERE item_id = 82; -- pina colada
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600' WHERE item_id = 83; -- blue lagoon
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600' WHERE item_id = 84; -- peanut butter shake
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1585325701956-60dd9c8bc012?w=600' WHERE item_id = 85; -- power house shake
+UPDATE MenuItems SET image_url = 'https://sfnutrition.co.uk/cdn/shop/articles/Vanilla_lla_1445x.jpg?v=1707148275' WHERE item_id = 85; -- power house shake
 
 -- 14. MARGARITAS & SMOOTHIES
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600' WHERE item_id = 86; -- mint margarita
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1546173159-315724a31696?w=600' WHERE item_id = 87; -- mango smoothie
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1604487488024-e1b5e3f5b3d9?w=600' WHERE item_id = 88; -- strawberry margarita
+UPDATE MenuItems SET image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFbCO3LzLf4CQIQh2oz8-E1KU6yWSse-qBtQ&s' WHERE item_id = 88; -- strawberry margarita
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600' WHERE item_id = 89; -- peach smoothie
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1570696516188-ade861b84a49?w=600' WHERE item_id = 90; -- blueberry margarita
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600' WHERE item_id = 91; -- banana smoothie
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1587015990127-424b954b6a21?w=600' WHERE item_id = 92; -- apple mint
+UPDATE MenuItems SET image_url = 'https://img-global.cpcdn.com/recipes/9839efbbc71ddbfb/680x781cq80/mint-margarita-recipe-main-photo.jpg' WHERE item_id = 92; -- apple mint
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=600' WHERE item_id = 93; -- guava smoothie
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600' WHERE item_id = 94; -- lime margarita
 
 -- 15. JUICES & CHILLAR
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1576173011850-e3e6bf2c3f94?w=600' WHERE item_id = 95; -- apple juice
+UPDATE MenuItems SET image_url = 'https://thumbs.dreamstime.com/b/glass-apple-juice-slice-ice-refreshing-summer-background-249797723.jpg' WHERE item_id = 95; -- apple juice
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600' WHERE item_id = 96; -- lemu pani
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600' WHERE item_id = 97; -- orange juice
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1567282093-f3f74ff1d765?w=600' WHERE item_id = 98; -- lemon soda
+UPDATE MenuItems SET image_url = 'https://bakesbybrownsugar.com/wp-content/uploads/2023/01/Lemon-Soda-15C.jpg' WHERE item_id = 98; -- lemon soda
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600' WHERE item_id = 99; -- peach iced tea
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600' WHERE item_id = 100; -- mint lime mojito
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600' WHERE item_id = 101; -- passion fruit mojito
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600' WHERE item_id = 102; -- strawberry mojito
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600' WHERE item_id = 103; -- raspberry iced tea
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1638429347076-fcbf9efc9e62?w=600' WHERE item_id = 104; -- strawberry kiwi chillar
+UPDATE MenuItems SET image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_YAgSHs5CnpiEFykKd26iyd7XEPJrV25YoQ&s' WHERE item_id = 104; -- strawberry kiwi chillar
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600' WHERE item_id = 105; -- lightning shot
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1570696516188-ade861b84a49?w=600' WHERE item_id = 106; -- purple heaven
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1497534446932-c925b458314e?w=600' WHERE item_id = 107; -- electric lemonade
@@ -800,7 +877,7 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-152337105410
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1561043433-aaf687c4cf04?w=600' WHERE item_id = 109; -- kiwi chillar
 
 -- 16. DEALS
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1598514982901-dfcf1f0eab5b?w=600' WHERE item_id = 110; -- nashville tenders family
+UPDATE MenuItems SET image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJPlZhhtzokWlRKQEmHO282w5YTw5A510eiA&s' WHERE item_id = 110; -- nashville tenders family
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1562967914-608f82629710?w=600' WHERE item_id = 111; -- nashville tenders 2person
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1606728035253-49e8a23146de?w=600' WHERE item_id = 112; -- nashville tenders single
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600' WHERE item_id = 113; -- deal 1
@@ -813,13 +890,13 @@ UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-151310489013
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1555072956-7758afb20e8f?w=600' WHERE item_id = 120; -- deal 8
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600' WHERE item_id = 121; -- deal 9
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1596956470007-2bf6095e7e16?w=600' WHERE item_id = 122; -- deal 10
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1528735602780-2556fd46c7af?w=600' WHERE item_id = 123; -- deal 11
+UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=600' WHERE item_id = 123; -- deal 11
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=600' WHERE item_id = 124; -- deal 12
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600' WHERE item_id = 125; -- deal 13
 
 -- EXTRA BEVERAGES
 UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=600' WHERE item_id = 501; -- coke bottle
-UPDATE MenuItems SET image_url = 'https://images.unsplash.com/photo-1625772452859-1c03d884dcd7?w=600' WHERE item_id = 502; -- sprite bottle
+UPDATE MenuItems SET image_url = 'https://www.cebooze.com/app/uploads/2020/10/spritecan.jpg' WHERE item_id = 502; -- sprite bottle
 
 
 
