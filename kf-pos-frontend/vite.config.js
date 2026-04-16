@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-
   ],
-  base: '/kf/',
+  base: '/',   // ✅ FIXED
 })
