@@ -61,14 +61,15 @@ if (process.env.DATABASE_URL) {
   dbConfig = process.env.DATABASE_URL;
 } else {
   // Local/InfinityFree Fallback
-  dbConfig = {
-    host: process.env.DB_HOST || "sql206.infinityfree.com",
-    user: process.env.DB_USER || "if0_41630524",
-    password: process.env.DB_PASSWORD || "YOUR_VPANEL_PASSWORD",
-    database: process.env.DB_NAME || "if0_41630524_kf_db",
-    waitForConnections: true,
-    connectionLimit: 10
-  };
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10
+};
 }
 
 // Create the promise-based pool
