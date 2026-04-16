@@ -9,22 +9,13 @@ require("dotenv").config();
 const app = express();
 
 // 2️⃣ MIDDLEWARE
-// 2️⃣ MIDDLEWARE
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    // Allow any origin for now to fix the standard CORS mismatch error
-    // In production, you can restrict this to vercel.app domains
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+// Use the official cors package instead of custom headers
+app.use(cors({
+    origin: "https://kf-sigma.vercel.app", // Your exact Vercel frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true // Required for cookies/auth headers
+}));
 
-    // Handle Preflight (OPTIONS)
-    if (req.method === "OPTIONS") {
-        return res.sendStatus(200);
-    }
-    next();
-});
 app.use(express.json());
 
 // ── LOGGER ──
@@ -53,7 +44,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: true, // Dynamically allow and echo the origin
+        origin: "https://kf-sigma.vercel.app", // Match Express CORS exactly
         methods: ["GET", "POST"],
         credentials: true
     }
