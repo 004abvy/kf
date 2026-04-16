@@ -11,7 +11,7 @@ const app = express();
 // 2️⃣ MIDDLEWARE
 // Replace your old app.use(cors(...)) with this:
 app.use(cors({
-    origin: ["https://kf-sigma.vercel.app", "http://localhost:5173"], // Add your local dev URL too
+    origin: ["https://kf-sigma.vercel.app", "http://localhost:5173", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -43,7 +43,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://kf-sigma.vercel.app", // Set this to your Vercel URL
+        origin: ["https://kf-sigma.vercel.app", "http://localhost:5173", "http://localhost:3000"],
         methods: ["GET", "POST"],
         credentials: true
     }
