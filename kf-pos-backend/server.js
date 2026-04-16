@@ -60,16 +60,16 @@ let dbConfig;
 if (process.env.DATABASE_URL) {
   dbConfig = process.env.DATABASE_URL;
 } else {
-  // Local/InfinityFree Fallback
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10
-};
+  // FIXED: Removed the 'const' keyword here so it assigns to the let variable above
+  dbConfig = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10
+  };
 }
 
 // Create the promise-based pool
