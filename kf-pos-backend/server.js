@@ -9,8 +9,9 @@ require("dotenv").config();
 const app = express();
 
 // 2️⃣ MIDDLEWARE
+// Replace your old app.use(cors(...)) with this:
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: ["https://kf-sigma.vercel.app", "http://localhost:5173"], // Add your local dev URL too
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -42,8 +43,9 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || "*",
-        methods: ["GET", "POST"]
+        origin: "https://kf-sigma.vercel.app", // Set this to your Vercel URL
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
