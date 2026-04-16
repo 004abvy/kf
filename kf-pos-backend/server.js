@@ -9,12 +9,22 @@ require("dotenv").config();
 const app = express();
 
 // 2️⃣ MIDDLEWARE
-// Replace your old app.use(cors(...)) with this:
-app.use(cors({
-    origin: ["https://kf-sigma.vercel.app", "http://localhost:5173", "http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+// 2️⃣ MIDDLEWARE
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    // Allow any origin for now to fix the standard CORS mismatch error
+    // In production, you can restrict this to vercel.app domains
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+
+    // Handle Preflight (OPTIONS)
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
 app.use(express.json());
 
 // ── LOGGER ──
@@ -43,7 +53,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["https://kf-sigma.vercel.app", "http://localhost:5173", "http://localhost:3000"],
+        origin: true, // Dynamically allow and echo the origin
         methods: ["GET", "POST"],
         credentials: true
     }
