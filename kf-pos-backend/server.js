@@ -4,23 +4,11 @@ const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-app.get("/", (req, res) => {
-    res.send("KF Backend Running 🚀");
-});
 
-// 👇 WHATSAPP / TWILIO IMPORTS
-const twilio = require("twilio");
-let twilioClient = null;
-if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
-  twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
-}
-const twilioWhatsAppNumber = "whatsapp:+14155238886"; // Twilio Sandbox Number
-
-// 👇 WEBSOCKET IMPORTS
-const http = require("http");
-const { Server } = require("socket.io");
-
+// 1️⃣ CREATE APP FIRST
 const app = express();
+
+// 2️⃣ MIDDLEWARE
 app.use(cors({
     origin: process.env.FRONTEND_URL || "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -28,7 +16,29 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// 👇 WRAP EXPRESS IN HTTP SERVER FOR WEBSOCKETS
+// ── LOGGER ──
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// 3️⃣ TEST ROUTE
+app.get("/", (req, res) => {
+    res.send("KF Backend Running 🚀");
+});
+
+// 4️⃣ WHATSAPP / TWILIO IMPORTS
+const twilio = require("twilio");
+let twilioClient = null;
+if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
+  twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+}
+const twilioWhatsAppNumber = "whatsapp:+14155238886"; // Twilio Sandbox Number
+
+// 5️⃣ WEBSOCKET IMPORTS & SERVER WRAP
+const http = require("http");
+const { Server } = require("socket.io");
+
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -37,23 +47,6 @@ const io = new Server(server, {
     }
 });
 
-
-// ❌ DELETE THIS ENTIRE BLOCK
-let dbConfig;
-
-if (process.env.DATABASE_URL) {
-    dbConfig = process.env.DATABASE_URL;
-} else {
-    dbConfig = {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        waitForConnections: true,
-        connectionLimit: 10
-    };
-}
-
 io.on("connection", (socket) => {
   console.log(`⚡ Kitchen Display Connected: ${socket.id}`);
   socket.on("disconnect", () =>
@@ -61,15 +54,24 @@ io.on("connection", (socket) => {
   );
 });
 
-// ── LOGGER ──
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+// 6️⃣ DB CONNECTION
+let dbConfig;
 
+if (process.env.DATABASE_URL) {
+  dbConfig = process.env.DATABASE_URL;
+} else {
+  // Local/InfinityFree Fallback
+  dbConfig = {
+    host: process.env.DB_HOST || "sql206.infinityfree.com",
+    user: process.env.DB_USER || "if0_41630524",
+    password: process.env.DB_PASSWORD || "YOUR_VPANEL_PASSWORD",
+    database: process.env.DB_NAME || "if0_41630524_kf_db",
+    waitForConnections: true,
+    connectionLimit: 10
+  };
+}
 
-
-// Create the promise-based pool using the 'mysql' variable you already imported at the top
+// Create the promise-based pool
 const pool = mysql.createPool(dbConfig);
 
 // Test the connection on startup
@@ -82,6 +84,8 @@ pool
   .catch((err) => {
     console.error("❌ DB connection failed:", err.message);
   });
+
+// 7️⃣ ROUTES
 // ── AUTHENTICATION ──
 app.post("/api/auth/signup", async (req, res) => {
   try {
@@ -175,7 +179,7 @@ app.get("/api/modifiers", async (req, res) => {
   }
 });
 
-// ── DELIVERY LOCATIONS (FIXED pool.query) ──
+// ── DELIVERY LOCATIONS ──
 app.get("/api/locations", async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -190,9 +194,8 @@ app.get("/api/locations", async (req, res) => {
   }
 });
 
-// ── CHECKOUT (UPDATED FOR DELIVERY ADDRESS) ──
+// ── CHECKOUT ──
 app.post("/api/checkout", async (req, res) => {
-  // Extracted deliveryAddress and deliveryFee from the frontend request
   const {
     items,
     total,
@@ -212,10 +215,8 @@ app.post("/api/checkout", async (req, res) => {
     );
     const staffId = staff[0]?.staff_id || null;
 
-    // Determine if it's a delivery or takeaway based on whether an address was provided
     const orderType = deliveryAddress ? "Delivery" : "Takeaway";
 
-    // Insert into Orders with the new delivery_address column
     const [orderResult] = await connection.query(
       `INSERT INTO Orders (order_number, staff_id, order_type, total_amount, order_status, customer_phone, delivery_address) 
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -313,14 +314,13 @@ app.get("/api/staff/orders", async (req, res) => {
   }
 });
 
-// 👇 UPDATED: WHATSAPP INTEGRATION WITH ORDER DETAILS & PRICE
+// ── WHATSAPP STATUS UPDATES ──
 app.post("/api/staff/update-status", async (req, res) => {
   try {
     const { orderId, newStatus, newPaymentStatus, rejectionReason } = req.body;
     if (!orderId || !newStatus)
       return res.status(400).json({ message: "Missing required fields" });
 
-    // 1. Fetch main order details
     const [orderData] = await pool.query(
       "SELECT customer_phone, order_number, total_amount FROM Orders WHERE order_id = ?",
       [orderId],
@@ -329,7 +329,6 @@ app.post("/api/staff/update-status", async (req, res) => {
     const shortOrderNum = orderData[0]?.order_number.slice(-6);
     const totalAmount = orderData[0]?.total_amount;
 
-    // 2. Fetch the specific items for this order so we can list them in the WhatsApp message
     const [itemsData] = await pool.query(
       `
             SELECT oi.quantity, 
@@ -343,7 +342,6 @@ app.post("/api/staff/update-status", async (req, res) => {
       [orderId],
     );
 
-    // Format items into a neat list: "▫️ 2x Burger (Standard)"
     const itemsList = itemsData
       .map((item) => {
         let details =
@@ -354,7 +352,6 @@ app.post("/api/staff/update-status", async (req, res) => {
       })
       .join("\n");
 
-    // 3. Update Database
     await pool.query(
       "UPDATE Orders SET order_status = ?, rejection_reason = ? WHERE order_id = ?",
       [newStatus, rejectionReason || null, orderId],
@@ -365,10 +362,8 @@ app.post("/api/staff/update-status", async (req, res) => {
         [newPaymentStatus, orderId],
       );
 
-    // 4. Broadcast WebSocket
     io.emit("order_updated");
 
-    // 5. Build and Send WhatsApp Message
     if (phone && phone.length >= 10) {
       let msg = "";
 
@@ -381,7 +376,6 @@ app.post("/api/staff/update-status", async (req, res) => {
       }
 
       if (msg) {
-        // Convert local Pakistani number (0300...) to International (+92300...)
         let formattedPhone = phone;
         if (phone.startsWith("0")) {
           formattedPhone = "+92" + phone.substring(1);
@@ -511,7 +505,7 @@ app.get("/api/customer/history/:phone", async (req, res) => {
   }
 });
 
-// ── START SERVER ──
+// 8️⃣ START SERVER
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
