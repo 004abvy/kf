@@ -149,11 +149,12 @@ app.post("/api/auth/login", async (req, res) => {
 app.get("/api/categories", async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT * FROM Categories WHERE is_active = TRUE ORDER BY display_order",
+      "SELECT * FROM categories WHERE is_active = TRUE ORDER BY display_order",
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Error fetching categories:", err);
+    res.status(500).json({ message: "Error fetching categories" });
   }
 });
 
@@ -162,23 +163,25 @@ app.get("/api/items/:categoryId", async (req, res) => {
     const [rows] = await pool.query(
       `
             SELECT m.item_id, m.name as item_name, m.image_url, v.variation_id, v.size_name, v.price 
-            FROM MenuItems m JOIN ItemVariations v ON m.item_id = v.item_id
+            FROM menuitems m JOIN itemvariations v ON m.item_id = v.item_id
             WHERE m.category_id = ? AND m.is_active = TRUE`,
       [req.params.categoryId],
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Error fetching items:", err);
+    res.status(500).json({ message: "Error fetching items" });
   }
 });
 
 app.get("/api/modifiers", async (req, res) => {
   try {
     const [modifiers] = await pool.query(
-      `SELECT modifier_id, name, price FROM Modifiers WHERE is_active = TRUE`,
+      `SELECT modifier_id, name, price FROM modifiers WHERE is_active = TRUE`,
     );
     res.json(modifiers);
   } catch (error) {
+    console.error("Error fetching modifiers:", error);
     res.status(500).json({ message: "Error fetching modifiers" });
   }
 });

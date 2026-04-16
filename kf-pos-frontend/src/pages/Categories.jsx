@@ -159,9 +159,12 @@ export default function CategoriesPage() {
     const loadCategories = async () => {
       try {
         const res = await fetch(`${API_URL}/api/categories`);
+        if (!res.ok) {
+          throw new Error(`Failed to load categories (${res.status})`);
+        }
         const data = await res.json();
-        
-        const formatted = data.map(cat => ({
+
+        const formatted = (Array.isArray(data) ? data : []).map((cat) => ({
           id: cat.category_id,
           title: cat.name,
           img: cat.image_url || `https://placehold.co/400x300/111/fff?text=${encodeURIComponent(cat.name)}`
