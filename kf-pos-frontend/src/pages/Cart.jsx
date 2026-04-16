@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = import.meta.env.VITE_API_URL;
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -27,7 +29,7 @@ const Cart = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/locations'); 
+        const res = await fetch(`${API_URL}/api/locations`); 
         const data = await res.json();
         setLocations(data);
       } catch (err) {
@@ -42,7 +44,7 @@ const Cart = () => {
       if (!currentOrder) return;
       if (currentOrder.status === 'Completed' || currentOrder.status === 'Rejected') return;
       try {
-        const res = await fetch(`http://localhost:3000/api/orders/status/${currentOrder.orderNumber}`, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}/api/orders/status/${currentOrder.orderNumber}`, { cache: 'no-store' });
         const data = await res.json();
         if (data.status && data.status !== currentOrder.status) {
           const updatedOrder = { 
@@ -71,7 +73,7 @@ const Cart = () => {
     localStorage.setItem('kf_location', JSON.stringify(selectedLocation));
 
     try {
-      const response = await fetch('http://localhost:3000/api/checkout', {
+      const response = await fetch(`${API_URL}/api/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

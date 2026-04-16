@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+
+const API_URL = import.meta.env.VITE_API_URL;
 import { StaggerText } from "../components/AnimatedText";
 
 /* ─── Data ─────────────────────────────────────────────────── */
@@ -156,7 +158,7 @@ export default function CategoriesPage() {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/categories");
+        const res = await fetch(`${API_URL}/api/categories`);
         const data = await res.json();
         
         const formatted = data.map(cat => ({

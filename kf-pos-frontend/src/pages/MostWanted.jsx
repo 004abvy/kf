@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext";
 import { motion } from "framer-motion";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=900&q=80";
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = import.meta.env.VITE_API_URL + '/api';
 
 export default function MostWanted() {
   const [products, setProducts] = useState([]);

@@ -30,7 +30,7 @@ const Menu = () => {
   const lenis = useLenis();
   const { cartItems, addToCart, updateQuantity, removeFromCart, subtotal, totalItems } = useCart();
   const navigate = useNavigate();
-  const API_BASE = "http://localhost:3000/api";
+  const API_BASE = import.meta.env.VITE_API_URL + '/api';
 
   useEffect(() => {
     const loadEntireMenu = async () => {

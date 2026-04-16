@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 app.get("/", (req, res) => {
-  res.send("KF Backend Running 🚀");
+    res.send("KF Backend Running 🚀");
 });
 
 // 👇 WHATSAPP / TWILIO IMPORTS
@@ -21,19 +21,38 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
-app.use(
-  cors({
+app.use(cors({
     origin: process.env.FRONTEND_URL || "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
-  }),
-);
+    credentials: true
+}));
 app.use(express.json());
 
 // 👇 WRAP EXPRESS IN HTTP SERVER FOR WEBSOCKETS
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: process.env.FRONTEND_URL || "*", methods: ["GET", "POST"] },
+    cors: {
+        origin: process.env.FRONTEND_URL || "*",
+        methods: ["GET", "POST"]
+    }
 });
+
+
+// ❌ DELETE THIS ENTIRE BLOCK
+let dbConfig;
+
+if (process.env.DATABASE_URL) {
+    dbConfig = process.env.DATABASE_URL;
+} else {
+    dbConfig = {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        waitForConnections: true,
+        connectionLimit: 10
+    };
+}
 
 io.on("connection", (socket) => {
   console.log(`⚡ Kitchen Display Connected: ${socket.id}`);
@@ -48,23 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── DB CONNECTION ──
-let dbConfig;
 
-// If we are on a deployed server, use the connection string
-if (process.env.DATABASE_URL) {
-  dbConfig = process.env.DATABASE_URL;
-} else {
-  // Fallback to separate variables (Plug your InfinityFree details here or in your .env file)
-  dbConfig = {
-    host: process.env.DB_HOST || "sql206.infinityfree.com",
-    user: process.env.DB_USER || "if0_41630524",
-    password: process.env.DB_PASSWORD || "YOUR_VPANEL_PASSWORD",
-    database: process.env.DB_NAME || "if0_41630524_kf_db",
-    waitForConnections: true,
-    connectionLimit: 10,
-  };
-}
 
 // Create the promise-based pool using the 'mysql' variable you already imported at the top
 const pool = mysql.createPool(dbConfig);
@@ -510,11 +513,10 @@ app.get("/api/customer/history/:phone", async (req, res) => {
 
 // ── START SERVER ──
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.log(
-    `✅ KF POS Backend Online w/ WebSockets: http://localhost:${PORT}`,
-  ),
-);
+
+server.listen(PORT, () => {
+    console.log(`🚀 KF Backend running on port ${PORT}`);
+});
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE")

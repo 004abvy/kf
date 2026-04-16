@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import io from 'socket.io-client'; 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Connect to WebSocket Server
-const socket = io('http://localhost:3000');
+const socket = io(API_URL);
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -39,7 +41,7 @@ const StaffDashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/staff/orders', { cache: 'no-store' });
+      const res = await fetch(`${API_URL}/api/staff/orders`, { cache: 'no-store' });
       const data = await res.json();
       
       // Force strict First-In, First-Out (Oldest orders first)
@@ -81,7 +83,7 @@ const StaffDashboard = () => {
       const payload = { orderId, newStatus, newPaymentStatus };
       if (reason) payload.rejectionReason = reason;
 
-      await fetch('http://localhost:3000/api/staff/update-status', {
+      await fetch(`${API_URL}/api/staff/update-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

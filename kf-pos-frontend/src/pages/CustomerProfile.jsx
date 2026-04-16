@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+const API_URL = import.meta.env.VITE_API_URL;
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // Ensure this path is correct!
 
@@ -15,7 +17,7 @@ const CustomerProfile = () => {
     if (phone.length < 10) return alert("Enter a valid phone number");
     
     try {
-      const res = await fetch(`http://localhost:3000/api/customer/history/${phone}`);
+      const res = await fetch(`${API_URL}/api/customer/history/${phone}`);
       const data = await res.json();
       setHistory(data);
       setHasSearched(true);

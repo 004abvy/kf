@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = import.meta.env.VITE_API_URL;
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -14,7 +16,7 @@ const OrderTracker = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/orders/status/${id}`, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}/api/orders/status/${id}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setStatus(data.status);
