@@ -205,12 +205,20 @@ app.post("/api/auth/login", async (req, res) => {
 // ── MENU & MODIFIERS ──
 app.get("/api/categories", async (req, res) => {
   try {
+    console.log("🔍 Categories endpoint called");
+    console.log("Pool exists:", !!pool);
+
+    if (!pool) {
+      return res.status(503).json({ message: "Database not connected" });
+    }
+
     const [rows] = await pool.query(
       "SELECT * FROM categories WHERE is_active = TRUE ORDER BY display_order",
     );
+    console.log("✅ Found categories:", rows.length);
     res.json(rows);
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("❌ Error fetching categories:", err);
     res
       .status(500)
       .json({ message: "Error fetching categories", error: err?.message || String(err) });
