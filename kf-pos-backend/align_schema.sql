@@ -3,9 +3,8 @@
 -- Cleaned & Organized Version
 -- =====================================================
 
--- 1. Create database and switch to it
-CREATE DATABASE IF NOT EXISTS kf_development;
-USE kf_development;
+-- NOTE: Database creation is handled in init-db.js using the configured DB_NAME.
+--       This file must not hardcode a specific database name for production.
 
 -- =====================================================
 -- TABLE CREATION

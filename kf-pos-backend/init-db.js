@@ -39,7 +39,9 @@ async function initializeDatabase() {
       const statements = cleanedSql
         .split(';')
         .map(stmt => stmt.trim())
-        .filter(stmt => stmt.length > 0);
+        .filter(stmt => stmt.length > 0)
+        .filter(stmt => !stmt.match(/^CREATE DATABASE IF NOT EXISTS/i))
+        .filter(stmt => !stmt.match(/^USE /i));
 
       console.log(`Found ${statements.length} SQL statements to execute`);
 
