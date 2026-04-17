@@ -4,16 +4,29 @@ const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const initializeDatabase = require("./init-db");
 
 // 1️⃣ CREATE APP FIRST
 const app = express();
 
 // 2️⃣ MIDDLEWARE
-// Use the official cors package instead of custom headers
+// Allow both localhost development and production URLs
+const allowedOrigins = [
+    "http://localhost:5173",      // Vite dev server
+    "http://localhost:3000",      // Fallback local
+    "https://kf-sigma.vercel.app" // Production
+];
+
 app.use(cors({
-    origin: "https://kf-sigma.vercel.app", // Your exact Vercel frontend URL
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true // Required for cookies/auth headers
+    credentials: true
 }));
 
 app.use(express.json());
@@ -44,7 +57,13 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://kf-sigma.vercel.app", // Match Express CORS exactly
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -74,19 +93,24 @@ if (process.env.DATABASE_URL) {
   };
 }
 
-// Create the promise-based pool
-const pool = mysql.createPool(dbConfig);
-
-// Test the connection on startup
-pool
-  .getConnection()
-  .then((conn) => {
+// Initialize database schema before creating pool
+let pool;
+(async () => {
+  try {
+    await initializeDatabase();
+    
+    // Create the promise-based pool
+    pool = mysql.createPool(dbConfig);
+    
+    // Test the connection on startup
+    const conn = await pool.getConnection();
     console.log("✅ Connected to MySQL Database");
     conn.release();
-  })
-  .catch((err) => {
-    console.error("❌ DB connection failed:", err.message);
-  });
+  } catch (error) {
+    console.error("❌ Initialization failed:", error.message);
+    process.exit(1);
+  }
+})();
 
 // 7️⃣ ROUTES
 // ── AUTHENTICATION ──

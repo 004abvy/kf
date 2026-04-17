@@ -14,9 +14,6 @@ USE Kfg;
 
 
 
-
-
-
 -- 1. Add the image column to the Modifiers table
 ALTER TABLE Modifiers ADD COLUMN image_url VARCHAR(255) DEFAULT NULL;
 
@@ -126,8 +123,7 @@ ALTER TABLE Orders ADD COLUMN delivery_address VARCHAR(255) NULL;
 
 
 ALTER TABLE Payments ADD COLUMN transaction_id VARCHAR(100) DEFAULT 'N/A';
-Truncate table Modifiers;
-DELETE FROM Staff;
+
 ALTER TABLE Staff AUTO_INCREMENT = 1;
 
 ALTER TABLE Orders MODIFY COLUMN order_status VARCHAR(50) DEFAULT 'Pending';
@@ -151,7 +147,7 @@ VALUES (3, 'Website System', 'web@kffastfood.com', 'dummy_hash', '0000', TRUE);
 
 -- 2. Disable safe updates and foreign key checks
 SET SQL_SAFE_UPDATES = 0;
-SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 3. Drop all tables if they exist (order matters due to FK)
 DROP TABLE IF EXISTS OrderItemModifiers;
