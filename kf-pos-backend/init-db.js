@@ -36,6 +36,27 @@ async function initializeDatabase() {
         await connection.query(statement);
       }
       console.log("✅ Schema initialized");
+
+      // Create indexes with error handling for idempotency
+      const indexes = [
+        "CREATE INDEX idx_menuitems_category ON MenuItems(category_id)",
+        "CREATE INDEX idx_itemvariations_item ON ItemVariations(item_id)",
+        "CREATE INDEX idx_orders_status ON Orders(order_status)",
+        "CREATE INDEX idx_orders_date ON Orders(created_at)",
+        "CREATE INDEX idx_staff_role ON Staff(role_id)",
+      ];
+
+      for (const indexStatement of indexes) {
+        try {
+          await connection.query(indexStatement);
+        } catch (error) {
+          // Ignore "duplicate key name" errors - index already exists
+          if (!error.message.includes("Duplicate key name")) {
+            throw error;
+          }
+        }
+      }
+      console.log("✅ Indexes created/verified");
     }
 
     console.log("🎉 Database initialization complete!");
