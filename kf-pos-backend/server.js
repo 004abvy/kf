@@ -89,9 +89,24 @@ io.on("connection", (socket) => {
 
 // 6️⃣ DB CONNECTION
 let dbConfig;
+let effectiveDbName = process.env.MYSQLDATABASE || process.env.DB_NAME;
+
+if (!effectiveDbName && process.env.DATABASE_URL) {
+  try {
+    const parsed = new URL(process.env.DATABASE_URL);
+    effectiveDbName = parsed.pathname.replace(/^\//, "").trim();
+  } catch (error) {
+    console.warn("⚠️ Could not parse DATABASE_URL for database name");
+  }
+}
 
 if (process.env.DATABASE_URL) {
-  dbConfig = process.env.DATABASE_URL;
+  // Force runtime queries to use the same DB name as init-db.
+  const parsed = new URL(process.env.DATABASE_URL);
+  if (effectiveDbName) {
+    parsed.pathname = `/${effectiveDbName}`;
+  }
+  dbConfig = parsed.toString();
 } else {
   dbConfig = {
     host: process.env.DB_HOST,
@@ -113,6 +128,7 @@ let pool;
     
     // Create the promise-based pool
     pool = mysql.createPool(dbConfig);
+    console.log(`📦 Runtime DB selected: ${effectiveDbName || "unknown"}`);
     
     // Test the connection on startup
     const conn = await pool.getConnection();

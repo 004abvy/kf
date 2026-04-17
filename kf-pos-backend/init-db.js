@@ -3,7 +3,26 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 
+function getEffectiveDatabaseName() {
+  if (process.env.MYSQLDATABASE) return process.env.MYSQLDATABASE;
+  if (process.env.DB_NAME) return process.env.DB_NAME;
+
+  if (process.env.DATABASE_URL) {
+    try {
+      const parsed = new URL(process.env.DATABASE_URL);
+      const dbName = parsed.pathname.replace(/^\//, "").trim();
+      if (dbName) return dbName;
+    } catch (error) {
+      console.warn("⚠️ Could not parse DATABASE_URL for database name");
+    }
+  }
+
+  throw new Error("No database name configured (MYSQLDATABASE/DB_NAME/DATABASE_URL)");
+}
+
 async function initializeDatabase() {
+  const databaseName = getEffectiveDatabaseName();
+
   // First connection (without database) to create DB
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
@@ -14,14 +33,14 @@ async function initializeDatabase() {
   });
 
   try {
-    console.log("🔧 Checking/Creating database...");
+    console.log(`🔧 Checking/Creating database... (DB_HOST: ${process.env.DB_HOST}, DB_NAME: ${databaseName})`);
 
     // Create database if it doesn't exist
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\``);
-    console.log(`✅ Database '${process.env.DB_NAME}' ready`);
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${databaseName}\``);
+    console.log(`✅ Database '${databaseName}' ready (will use this DB for all tables)`);
 
     // Now connect to the database
-    await connection.changeUser({ database: process.env.DB_NAME });
+    await connection.changeUser({ database: databaseName });
 
     // Read and execute schema SQL
     const schemaPath = path.join(__dirname, "align_schema.sql");
@@ -46,15 +65,22 @@ async function initializeDatabase() {
       console.log(`Found ${statements.length} SQL statements to execute`);
 
       for (const statement of statements) {
-        console.log(`Executing: ${statement.substring(0, 100)}...`);
+        const isCreateTable = statement.match(/CREATE TABLE/i);
+        if (isCreateTable) {
+          console.log(`📋 Creating table: ${statement.match(/CREATE TABLE[^\s]* ([^ (]+)/i)?.[1] || 'unknown'}`);
+        }
         try {
           await connection.query(statement);
+          if (isCreateTable) {
+            console.log(`✔️ Table created successfully`);
+          }
         } catch (sqlError) {
           // Log which statement failed but don't crash on schema already exists
           if (sqlError.code === "ER_TABLE_EXISTS_ERROR" || sqlError.code === "ER_DUP_KEYNAME") {
             console.log(`⚠️ Skipped (already exists): ${statement.substring(0, 50)}...`);
           } else {
-            console.error("❌ SQL Error:", sqlError.message, "\nStatement:", statement.substring(0, 100));
+            console.error("❌ SQL Error:", sqlError.code, sqlError.message);
+            console.error("Statement:", statement.substring(0, 150));
             throw sqlError;
           }
         }
