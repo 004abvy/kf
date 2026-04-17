@@ -4,8 +4,8 @@
 -- =====================================================
 
 -- 1. Create database and switch to it
-CREATE DATABASE IF NOT EXISTS railway;
-USE railway;
+CREATE DATABASE IF NOT EXISTS kf_development;
+USE kf_development;
 
 -- =====================================================
 -- TABLE CREATION
