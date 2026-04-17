@@ -20,17 +20,36 @@ function getEffectiveDatabaseName() {
   throw new Error("No database name configured (MYSQLDATABASE/DB_NAME/DATABASE_URL)");
 }
 
-async function initializeDatabase() {
-  const databaseName = getEffectiveDatabaseName();
+function getBootstrapConnectionConfig() {
+  if (process.env.DATABASE_URL) {
+    try {
+      const parsed = new URL(process.env.DATABASE_URL);
+      return {
+        host: parsed.hostname,
+        user: decodeURIComponent(parsed.username),
+        password: decodeURIComponent(parsed.password),
+        port: Number(parsed.port) || 3306,
+        connectTimeout: 10000,
+      };
+    } catch (error) {
+      console.warn("⚠️ Could not parse DATABASE_URL for bootstrap connection, falling back to DB_* vars");
+    }
+  }
 
-  // First connection (without database) to create DB
-  const connection = await mysql.createConnection({
+  return {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT || 3306,
-    connectTimeout: 10000
-  });
+    connectTimeout: 10000,
+  };
+}
+
+async function initializeDatabase() {
+  const databaseName = getEffectiveDatabaseName();
+
+  // First connection (without database) to create DB
+  const connection = await mysql.createConnection(getBootstrapConnectionConfig());
 
   try {
     console.log(`🔧 Checking/Creating database... (DB_HOST: ${process.env.DB_HOST}, DB_NAME: ${databaseName})`);
