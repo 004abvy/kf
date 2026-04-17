@@ -26,18 +26,10 @@ app.use(cors({
     maxAge: 86400 // 24 hours
 }));
 
-// Handle preflight requests explicitly
-app.options('*', cors());
+// Handle preflight requests - CORS middleware handles this automatically
+// No need for explicit app.options('*', ...) as it causes path-to-regexp errors
 
 app.use(express.json());
-
-// ── GUARD: Ensure pool is ready before handling requests ──
-app.use((req, res, next) => {
-  if (!pool) {
-    return res.status(503).json({ message: "Database connection not ready. Please try again." });
-  }
-  next();
-});
 
 // ── LOGGER ──
 app.use((req, res, next) => {
@@ -93,11 +85,7 @@ if (process.env.DATABASE_URL) {
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
-    enableTimeout: true,
-    connectionTimeout: 10000,
-    acquireTimeout: 10000,
-    idleTimeout: 30000
+    queueLimit: 0
   };
 }
 
@@ -114,6 +102,14 @@ let pool;
     const conn = await pool.getConnection();
     console.log("✅ Connected to MySQL Database");
     conn.release();
+
+    // ── GUARD: Ensure pool is ready before handling requests ──
+    app.use((req, res, next) => {
+      if (!pool) {
+        return res.status(503).json({ message: "Database connection not ready. Please try again." });
+      }
+      next();
+    });
 
     // Start server ONLY after database is ready
     const PORT = process.env.PORT || 3000;

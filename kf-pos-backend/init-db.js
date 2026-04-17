@@ -10,9 +10,7 @@ async function initializeDatabase() {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT || 3306,
-    connectTimeout: 10000,
-    enableKeepAlive: true,
-    keepAliveInitialDelayMs: 0
+    connectTimeout: 10000
   });
 
   try {
@@ -29,13 +27,24 @@ async function initializeDatabase() {
     const schemaPath = path.join(__dirname, "align_schema.sql");
     if (fs.existsSync(schemaPath)) {
       const schemaSql = fs.readFileSync(schemaPath, "utf8");
-      // Split by ; and filter empty statements
-      const statements = schemaSql
-        .split(";")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0 && !s.startsWith("--"));
+
+      // Remove comment lines and clean up
+      const cleanedSql = schemaSql
+        .split('\n')
+        .filter(line => !line.trim().startsWith('--'))
+        .join('\n')
+        .replace(/\n\s*\n/g, '\n'); // Remove empty lines
+
+      // Split by semicolon and clean up statements
+      const statements = cleanedSql
+        .split(';')
+        .map(stmt => stmt.trim())
+        .filter(stmt => stmt.length > 0);
+
+      console.log(`Found ${statements.length} SQL statements to execute`);
 
       for (const statement of statements) {
+        console.log(`Executing: ${statement.substring(0, 100)}...`);
         try {
           await connection.query(statement);
         } catch (sqlError) {
