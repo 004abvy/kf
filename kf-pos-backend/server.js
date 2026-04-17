@@ -229,7 +229,7 @@ app.get("/api/categories", async (req, res) => {
     }
 
     const [rows] = await pool.query(
-      "SELECT * FROM categories WHERE is_active = TRUE ORDER BY display_order",
+      "SELECT * FROM Categories WHERE is_active = TRUE ORDER BY display_order",
     );
     console.log("✅ Found categories:", rows.length);
     res.json(rows);
@@ -246,7 +246,7 @@ app.get("/api/items/:categoryId", async (req, res) => {
     const [rows] = await pool.query(
       `
             SELECT m.item_id, m.name as item_name, m.image_url, v.variation_id, v.size_name, v.price 
-            FROM menuitems m JOIN itemvariations v ON m.item_id = v.item_id
+            FROM MenuItems m JOIN ItemVariations v ON m.item_id = v.item_id
             WHERE m.category_id = ? AND m.is_active = TRUE`,
       [req.params.categoryId],
     );
@@ -263,7 +263,7 @@ app.get("/api/items/:categoryId", async (req, res) => {
 app.get("/api/modifiers", async (req, res) => {
   try {
     const [modifiers] = await pool.query(
-      `SELECT modifier_id, name, price FROM modifiers WHERE is_active = TRUE`,
+      `SELECT modifier_id, name, price FROM Modifiers WHERE is_active = TRUE`,
     );
     res.json(modifiers);
   } catch (error) {
