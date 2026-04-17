@@ -10,6 +10,9 @@ async function initializeDatabase() {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT || 3306,
+    connectTimeout: 10000,
+    enableKeepAlive: true,
+    keepAliveInitialDelayMs: 0
   });
 
   try {
@@ -33,7 +36,17 @@ async function initializeDatabase() {
         .filter((s) => s.length > 0 && !s.startsWith("--"));
 
       for (const statement of statements) {
-        await connection.query(statement);
+        try {
+          await connection.query(statement);
+        } catch (sqlError) {
+          // Log which statement failed but don't crash on schema already exists
+          if (sqlError.code === "ER_TABLE_EXISTS_ERROR" || sqlError.code === "ER_DUP_KEYNAME") {
+            console.log(`⚠️ Skipped (already exists): ${statement.substring(0, 50)}...`);
+          } else {
+            console.error("❌ SQL Error:", sqlError.message, "\nStatement:", statement.substring(0, 100));
+            throw sqlError;
+          }
+        }
       }
       console.log("✅ Schema initialized");
 

@@ -31,6 +31,14 @@ app.options('*', cors());
 
 app.use(express.json());
 
+// ── GUARD: Ensure pool is ready before handling requests ──
+app.use((req, res, next) => {
+  if (!pool) {
+    return res.status(503).json({ message: "Database connection not ready. Please try again." });
+  }
+  next();
+});
+
 // ── LOGGER ──
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -84,7 +92,12 @@ if (process.env.DATABASE_URL) {
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
-    connectionLimit: 10
+    connectionLimit: 10,
+    queueLimit: 0,
+    enableTimeout: true,
+    connectionTimeout: 10000,
+    acquireTimeout: 10000,
+    idleTimeout: 30000
   };
 }
 
@@ -101,8 +114,22 @@ let pool;
     const conn = await pool.getConnection();
     console.log("✅ Connected to MySQL Database");
     conn.release();
+
+    // Start server ONLY after database is ready
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => {
+        console.log(`🚀 KF Backend running on port ${PORT}`);
+    });
+
+    server.on("error", (err) => {
+      if (err.code === "EADDRINUSE")
+        console.error(`🚨 Port ${PORT} already in use`);
+      else console.error("🚨 SERVER ERROR:", err.message);
+    });
+
   } catch (error) {
     console.error("❌ Initialization failed:", error.message);
+    console.error("Stack trace:", error.stack);
     process.exit(1);
   }
 })();
@@ -536,19 +563,6 @@ app.get("/api/customer/history/:phone", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error fetching history" });
   }
-});
-
-// 8️⃣ START SERVER
-const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, () => {
-    console.log(`🚀 KF Backend running on port ${PORT}`);
-});
-
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE")
-    console.error(`🚨 Port ${PORT} already in use`);
-  else console.error("🚨 SERVER ERROR:", err.message);
 });
 
 process.on("uncaughtException", (err) =>
