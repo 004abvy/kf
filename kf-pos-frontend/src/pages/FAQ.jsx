@@ -20,20 +20,42 @@ export default function FAQ() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const faqData = {
-    delivery: [
-      { id: 1, question: 'Where do you deliver?', answer: 'We deliver to all areas within the city and surrounding regions. Contact us for specific delivery zones.' },
-      { id: 2, question: 'How long does delivery take?', answer: 'Standard delivery takes 30-45 minutes depending on distance and current order volume.' },
-      { id: 3, question: 'What are your delivery hours?', answer: 'We deliver from 11 AM to 11 PM daily. Orders must be placed at least 15 minutes before closure.' },
-      { id: 4, question: 'How much is the delivery fee outside Yerevan?', answer: 'Delivery fees outside Yerevan start at $5 and increase based on distance.' },
-    ],
-    menu: [
-      { id: 5, question: 'Do you have vegetarian options?', answer: 'Yes! We offer several vegetarian rolls and vegan options. Check our menu for the full selection.' },
-      { id: 6, question: 'How fresh is the sushi?', answer: 'All sushi is prepared fresh to order using the highest quality ingredients. We source fish daily.' },
-      { id: 7, question: 'Do you offer spicy rolls?', answer: 'Absolutely! We have several spicy options with varying heat levels like our Dragon Roll.' },
-      { id: 8, question: 'Do you use raw fish?', answer: 'Yes, we use sushi-grade raw fish in many rolls, handled with the utmost care.' },
-    ],
-  };
+const faqData = {
+  delivery: [
+    { 
+      id: 1, 
+      question: 'Where do you deliver?', 
+      answer: 'We deliver all across the city! From DHA and Gulberg to Johar Town and Bahria. Just enter your location to see the nearest branch.' 
+    },
+    { 
+      id: 2, 
+      question: 'How long does my Pizza take to arrive?', 
+      answer: 'Our goal is to get your food to you in 30-40 minutes. We bake fresh, so quality takes a few extra minutes but it is worth the wait!' 
+    },
+    { 
+      id: 3, 
+      question: 'What are your delivery timings?', 
+      answer: 'We are open from 12 PM to 1 AM daily. On Fridays and Saturdays, we stay open until 3 AM for those late-night cravings.' 
+    },
+  ],
+  menu: [
+    { 
+      id: 4, 
+      question: 'Are your sauces made in-house?', 
+      answer: 'Yes! Our signature Garlic Mayo and Spicy Dynamite sauces are made fresh daily in our kitchen.' 
+    },
+    { 
+      id: 5, 
+      question: 'Do you offer any family deals?', 
+      answer: 'Bilkul! We have special "Bachat Deals" for families and large groups that include Pizzas, Loaded Fries, and drinks at a discounted price.' 
+    },
+    { 
+      id: 6, 
+      question: 'Is the meat Halal?', 
+      answer: 'Yes, 100%. We only use premium, Halal-certified chicken and beef from reputable local suppliers.' 
+    },
+  ],
+};
 
   const renderFaqItem = (item) => (
     <div
@@ -64,10 +86,10 @@ export default function FAQ() {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-12 md:p-16 lg:p-24 font-sans">
-      <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-24 xl:gap-32 items-start">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-24 xl:gap-32 items-start">
         
         {/* LEFT COLUMN: Title & Description */}
-        <div className="lg:sticky lg:top-32 h-auto lg:min-h-[300px]">
+        <div className="lg:sticky lg:top-40 h-auto lg:min-h-[300px]">
           {isTriggered && (
             <div className="space-y-4 md:space-y-6">
               <StaggerText 

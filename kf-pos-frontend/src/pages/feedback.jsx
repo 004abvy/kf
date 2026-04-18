@@ -1,12 +1,50 @@
 import { useState, useEffect } from "react";
 
 const reviews = [
-  { id: 1, name: "Louise Hakobyan", rating: 5, text: "Perfect sushi rolls. Every bite was exactly what I hoped for — fresh, well-seasoned, and beautifully presented.", original: "Шикарные суши роллы", translated: true },
-  { id: 2, name: "Ashkhen Grigoryan", rating: 5, text: "I really like your rollers, you're one of my favorites in town.", original: "Шат Эм пасум эм роллер, ми фавурите в городе", translated: true },
-  { id: 3, name: "Varditer Mkrtchyan", rating: 5, text: "I spent a long time choosing where to get sushi. In the end I settled on Murakami. It was a day off and I didn't expect fast delivery, but our sushi arrived within 1.5 hours and it was great. The design killed me, I have never received such aesthetic pleasure from packaging. The sushi was fresh and tasty, only the rice was a little hard. Thank you, thanks to you, our evening was a success.", translated: false },
-  { id: 4, name: "Maria Petrosyan", rating: 5, text: "Incredible experience every single time. The attention to detail in presentation is unmatched. Highly recommend to anyone who loves authentic sushi.", translated: false },
-  { id: 5, name: "Ani Hovhannisyan", rating: 4, text: "Great place, very tasty rolls. The salmon was incredibly fresh. Will definitely be ordering again soon.", original: "Хорошее место, очень вкусные роллы", translated: true },
-  { id: 6, name: "David Sargsyan", rating: 5, text: "The packaging alone made my night special. Opened the box and couldn't believe how gorgeous everything looked before I even tasted anything.", translated: false },
+  { 
+    id: 1, 
+    name: "Zubair Khan", 
+    rating: 5, 
+    text: "The Loaded Fries are absolutely insane! Properly topped with cheese and chunks of chicken. Best late-night snack in the city.", 
+    original: "Yaar loaded fries ka maza hi agaya, full heavy scene hai!", 
+    translated: true 
+  },
+  { 
+    id: 2, 
+    name: "Sara Ahmed", 
+    rating: 5, 
+    text: "Finally found a place that actually puts enough toppings on their Pizza. The crust was soft and the flavors were spot on.", 
+    translated: false 
+  },
+  { 
+    id: 3, 
+    name: "Hassan Raza", 
+    rating: 5, 
+    text: "Best Shawarma in town. The chicken was juicy and the garlic sauce was legit. Not like those dry ones you get everywhere else. Highly recommend their spicy variant!", 
+    translated: false 
+  },
+  { 
+    id: 4, 
+    name: "Mariam Malik", 
+    rating: 5, 
+    text: "Ordered the Pizza and a Platter for a house party. Delivery was right on time and everything arrived piping hot. Everyone loved the dips!", 
+    translated: false 
+  },
+  { 
+    id: 5, 
+    name: "Bilal Sheikh", 
+    rating: 4, 
+    text: "Great value for money. The deal for 2 people was more than enough. The only thing is they should add more napkins in the bag!", 
+    original: "Bhai quantity bohat fit hai, maza agaya kha k.", 
+    translated: true 
+  },
+  { 
+    id: 6, 
+    name: "Anum Pervez", 
+    rating: 5, 
+    text: "The packaging is so clean and premium. The pizza box is sturdy and the fries didn't get soggy at all during delivery. 10/10 for hygiene and taste.", 
+    translated: false 
+  },
 ];
 
 const StarRating = ({ rating }) => (
@@ -77,8 +115,8 @@ export default function Feedback() {
   const translationPercentage = 100 / cardsPerView;
 
   return (
-    <div className="bg-black font-sans overflow-hidden mt-10 py-8 px-4 md:px-10">
-      <div className="px-4 md:px-12 mb-10 max-w-7xl mx-auto">
+    <div className="bg-black font-sans overflow-hidden -mt-10 py-8 px-4 md:px-10">
+      <div className="px-4 md:px-12 mb-10 max-w-8xl mx-auto">
         <h1 className="text-white text-3xl md:text-5xl font-bold tracking-wider mb-4 uppercase">
           Your opinion matters.
         </h1>

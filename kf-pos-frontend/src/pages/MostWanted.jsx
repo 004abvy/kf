@@ -112,7 +112,7 @@ export default function MostWanted() {
   );
 
   return (
-    <section className="bg-black text-white py-10 md:py-16 px-4 lg:px-12 font-sans min-h-screen">
+    <section className="bg-black text-white py-10 md:py-16 px-4 lg:px-12 font-sans min-h-screen pt-24">
       <div className="max-w-[1650px] mx-auto">
         
         {/* COMMON HEADER */}
@@ -178,7 +178,7 @@ export default function MostWanted() {
         <div className="hidden lg:grid grid-cols-12 gap-16 xl:gap-24 items-start">
           
           {/* Sticky Left Hero */}
-          <div className="col-span-5 sticky top-[150px] h-[75vh] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl group">
+          <div className="col-span-5 sticky top-[200px] h-[75vh] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl group">
             <img src={HERO_IMG} alt="Popular dishes" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
               <p className="text-3xl xl:text-4xl font-extrabold uppercase tracking-wide leading-tight mb-6 max-w-[90%]">

@@ -197,14 +197,14 @@ export default function CategoriesPage() {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" />
 
       {/* Title */}
-      <div style={{ paddingLeft: "clamp(16px, 6vw, 100px)", marginBottom: "20px" }}>
+      <div style={{ paddingLeft: "clamp(16px, 6vw, 100px)", marginBottom: "60px" }}>
         <div style={{ margin: 0, fontSize: "clamp(24px, 5vw, 56px)", fontWeight: 900, letterSpacing: "0.04em", textTransform: "uppercase", lineHeight: 1 }}>
           <StaggerText text="OUR CATEGORIES" as="span" />
         </div>
       </div>
 
       {/* Row 1 */}
-      <div style={{ marginBottom: "8px" }}>
+      <div style={{ marginBottom: "50px" }}>
         <MarqueeRow items={rowTop} direction="left" />
       </div>
 

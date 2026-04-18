@@ -234,8 +234,9 @@ const Menu = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter text-white uppercase">{category.name}</h2>
             <div className="h-[2px] flex-1 bg-gradient-to-r from-zinc-900 to-transparent" />
           </div>
-          <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3">
-            {category.products.map((item, idx) => {
+              {/* 3 columns by default, 4 columns only on large desktop/laptops */}
+            <div className="grid grid-cols-3 xl:grid-cols-4 gap-1 sm:gap-2 md:gap-3"> 
+              {category.products.map((item, idx) => {
               const minPrice = Math.min(...item.variations.map(v => parseFloat(v.price)));
               return (
                 <motion.div
