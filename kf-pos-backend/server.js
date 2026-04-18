@@ -279,7 +279,11 @@ app.get("/api/modifiers", async (req, res) => {
 app.get("/api/locations", async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT * FROM delivery_locations WHERE is_active = TRUE",
+      `SELECT MIN(id) AS id, area_name, MIN(delivery_fee) AS delivery_fee
+      FROM delivery_locations
+      WHERE is_active = TRUE
+      GROUP BY area_name
+      ORDER BY area_name`,
     );
     res.json(rows);
   } catch (error) {

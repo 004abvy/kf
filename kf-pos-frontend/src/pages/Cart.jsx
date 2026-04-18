@@ -31,7 +31,10 @@ const Cart = () => {
       try {
         const res = await fetch(`${API_URL}/api/locations`); 
         const data = await res.json();
-        setLocations(data);
+        const uniqueLocations = Array.from(
+          new Map(data.map((loc) => [loc.area_name, loc])).values(),
+        );
+        setLocations(uniqueLocations);
       } catch (err) {
         console.error("Failed to fetch locations:", err);
       }

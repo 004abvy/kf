@@ -149,7 +149,8 @@ CREATE TABLE IF NOT EXISTS delivery_locations (
     area_name VARCHAR(100) NOT NULL,
     delivery_fee INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_delivery_area_name (area_name)
 );
 
 -- =====================================================
