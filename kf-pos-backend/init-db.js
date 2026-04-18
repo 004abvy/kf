@@ -61,8 +61,8 @@ async function initializeDatabase() {
     // Now connect to the database
     await connection.changeUser({ database: databaseName });
 
-    // Read and execute schema SQL
-    const schemaPath = path.join(__dirname, "align_schema.sql");
+    // Read and execute schema SQL from the single KF-GG.sql file at the repo root
+    const schemaPath = path.join(__dirname, "..", "KF-GG.sql");
     if (fs.existsSync(schemaPath)) {
       const schemaSql = fs.readFileSync(schemaPath, "utf8");
 

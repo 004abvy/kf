@@ -37,7 +37,7 @@ function getDbConfig() {
 }
 
 async function resetSeedData() {
-  const schemaPath = path.join(__dirname, "align_schema.sql");
+  const schemaPath = path.join(__dirname, "..", "KF-GG.sql");
   const schemaSql = fs.readFileSync(schemaPath, "utf8");
 
   const statements = schemaSql
@@ -84,7 +84,7 @@ async function resetSeedData() {
     }
 
     await conn.commit();
-    console.log("Seed reset complete. Database now matches align_schema.sql data.");
+    console.log("Seed reset complete. Database now matches KF-GG.sql data.");
   } catch (error) {
     await conn.rollback();
     console.error("Seed reset failed:", error.message);
