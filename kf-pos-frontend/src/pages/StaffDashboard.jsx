@@ -5,7 +5,11 @@ import io from 'socket.io-client';
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Connect to WebSocket Server
-const socket = io(API_URL);
+const socket = io(API_URL, {
+  transports: ['websocket', 'polling'],
+  reconnection: true,
+  withCredentials: true,
+});
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -59,6 +63,14 @@ const StaffDashboard = () => {
   useEffect(() => {
     fetchOrders(); 
 
+    socket.on('connect', () => {
+      console.log('✅ KDS socket connected');
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('❌ KDS socket connection error:', err.message);
+    });
+
     socket.on('new_order', () => {
       playNotification(); 
       fetchOrders();      
@@ -68,12 +80,18 @@ const StaffDashboard = () => {
       fetchOrders();
     });
 
+    // Fallback refresh if websocket events are missed.
+    const refreshInterval = setInterval(fetchOrders, 10000);
+
     // This makes the timers tick down every second
     const ticker = setInterval(() => setNow(Date.now()), 1000);
 
     return () => {
+      socket.off('connect');
+      socket.off('connect_error');
       socket.off('new_order');
       socket.off('order_updated');
+      clearInterval(refreshInterval);
       clearInterval(ticker);
     };
   }, []);
