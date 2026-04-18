@@ -68,8 +68,7 @@ export default function MostWanted() {
     <>
       <div className="w-full aspect-[4/3] relative overflow-hidden bg-[#1a1a1a]">
         <img
-          src={product.image_url || `https://placehold.co/600x400/18181b/ffffff?text=${encodeURIComponent(product.item_name)}`}
-          alt={product.item_name}
+          src={product.image_url || `https://source.unsplash.com/featured/600x400?fastfood,${encodeURIComponent(product.item_name)}`}          alt={product.item_name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent lg:hidden"></div>
