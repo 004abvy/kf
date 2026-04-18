@@ -185,13 +185,8 @@ INSERT INTO delivery_locations (area_name, delivery_fee) VALUES
 ('Sabzazar', 0), ('Awan Town', 100), ('Marghzar Colony', 100);
 
 INSERT INTO Modifiers (name, price, image_url, is_active) VALUES 
-('Extra Cheese', 80.00, 'https://static.tossdown.com/images/aea58297-7638-4970-9fb3-937fd9588b3b.webp', TRUE),
 ('Extra Shawarma Bread', 50.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600', TRUE),
-('Add Small  Crinkle Fries', 200.00, 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', TRUE),
-('Each Sauce (Nashville)', 70.00, 'https://images.unsplash.com/photo-1472476443507-c7a5948772bf?w=600', TRUE),
-('Extra Bread', 50.00, 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600', TRUE),
-('Extra Sauce', 50.00, 'https://images.unsplash.com/photo-1585238341267-1cb0a8d4d7ba?w=600', TRUE),
-('Extra Chicken', 500.00, 'https://images.unsplash.com/photo-1562967914-608f82629710?w=600', TRUE);
+('Add Small Crinkle Fries', 200.00, 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', TRUE);
 
 
 -- =================================================================

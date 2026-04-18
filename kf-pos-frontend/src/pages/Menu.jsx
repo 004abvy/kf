@@ -55,11 +55,14 @@ const Menu = () => {
                     variations: []
                   };
                 }
-                acc[groupKey].variations.push({
-                  variation_id: curr.variation_id,
-                  size_name: curr.size_name || "Standard",
-                  price: curr.price
-                });
+                const sizeName = curr.size_name || "Standard";
+                if (!acc[groupKey].variations.some(v => v.size_name === sizeName)) {
+                  acc[groupKey].variations.push({
+                    variation_id: curr.variation_id,
+                    size_name: sizeName,
+                    price: curr.price
+                  });
+                }
                 return acc;
               }, {}) : {};
 

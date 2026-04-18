@@ -80,9 +80,9 @@ UPDATE Categories SET image_url = 'https://plus.unsplash.com/premium_photo-16836
 
 
 ALTER TABLE OrderItems ADD COLUMN modifiers VARCHAR(255) DEFAULT NULL;
-INSERT INTO Modifiers (name, price, is_active) VALUES ('Extra Cheese', 80.00, TRUE);
-INSERT INTO Modifiers (name, price, is_active) VALUES ('Extra Shawarma Bread', 50.00, TRUE);
-INSERT INTO Modifiers (name, price, is_active) VALUES ('Add Small  Crinkle Fries', 200.00, TRUE);
+INSERT INTO Modifiers (name, price, image_url, is_active) VALUES
+('Extra Shawarma Bread', 50.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600', TRUE),
+('Add Small Crinkle Fries', 200.00, 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', TRUE);
 
 ALTER TABLE OrderItems MODIFY variation_id INT NULL;
 ALTER TABLE OrderItems ADD COLUMN standalone_name VARCHAR(100) DEFAULT NULL;
@@ -462,16 +462,7 @@ INSERT INTO ItemVariations (item_id, size_name, price) VALUES
 (123, 'Regular', 2950), (124, 'Regular', 750), (125, 'Regular', 4310);
 
 -- =================================================================
--- MODIFIERS
 -- =================================================================
-INSERT INTO Modifiers (name, price) VALUES
-('Each Sauce (Nashville)', 70), ('Extra Bread', 50), ('Extra Sauce', 50), 
-('Extra Chicken', 500), ('Extra Cheese', 80), ('Extra Shawarma Bread', 50);
-
-
-
-
-
 
 -- Insert fresh default data
 INSERT INTO Roles (role_id, role_name) VALUES 

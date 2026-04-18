@@ -7,26 +7,12 @@
 CREATE DATABASE IF NOT EXISTS Kfg;
 USE Kfg;
 
--- 2. Disable safe updates and foreign key checks
+-- =====================================================
+-- Disable Constraints
+-- =====================================================
+
 SET SQL_SAFE_UPDATES = 0;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- 3. Drop all tables if they exist (order matters due to FK)
-DROP TABLE IF EXISTS OrderItemModifiers;
-DROP TABLE IF EXISTS OrderItems;
-DROP TABLE IF EXISTS Payments;
-DROP TABLE IF EXISTS Orders;
-DROP TABLE IF EXISTS ItemVariations;
-DROP TABLE IF EXISTS MenuItems;
-DROP TABLE IF EXISTS Modifiers;
-DROP TABLE IF EXISTS Categories;
-DROP TABLE IF EXISTS DiningTables;
-DROP TABLE IF EXISTS Staff;
-DROP TABLE IF EXISTS Roles;
-DROP TABLE IF EXISTS delivery_locations;
-
--- 4. Re-enable safe updates
-SET SQL_SAFE_UPDATES = 1;
 
 -- =====================================================
 -- TABLE CREATION
@@ -483,10 +469,5 @@ INSERT INTO ItemVariations (item_id, size_name, price) VALUES
 -- MODIFIERS
 -- =====================================================
 INSERT INTO Modifiers (name, price, image_url, is_active) VALUES
-('Each Sauce (Nashville)', 70, 'https://images.unsplash.com/photo-1472476443507-c7a5948772bf?w=600', TRUE),
-('Extra Bread', 50, 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600', TRUE),
-('Extra Sauce', 50, 'https://images.unsplash.com/photo-1585238341267-1cb0a8d4d7ba?w=600', TRUE),
-('Extra Chicken', 500, 'https://images.unsplash.com/photo-1562967914-608f82629710?w=600', TRUE),
-('Extra Cheese', 80, 'https://static.tossdown.com/images/aea58297-7638-4970-9fb3-937fd9588b3b.webp', TRUE),
 ('Extra Shawarma Bread', 50, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600', TRUE),
 ('Add Small Crinkle Fries', 200, 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', TRUE);

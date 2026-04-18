@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS ItemVariations (
     price DECIMAL(10, 2) NOT NULL,
     cost_price DECIMAL(10, 2) DEFAULT 0.00,
     sku VARCHAR(50) UNIQUE DEFAULT NULL,
+    UNIQUE KEY idx_item_size (item_id, size_name),
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (item_id) REFERENCES MenuItems(item_id) ON DELETE CASCADE
 );
@@ -77,6 +78,7 @@ CREATE TABLE IF NOT EXISTS ItemVariations (
 CREATE TABLE IF NOT EXISTS Modifiers (
     modifier_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    UNIQUE KEY idx_modifier_name (name),
     image_url VARCHAR(255) DEFAULT NULL,
     price DECIMAL(10, 2) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
@@ -446,10 +448,5 @@ INSERT IGNORE INTO ItemVariations (item_id, size_name, price) VALUES
 
 -- MODIFIERS
 INSERT IGNORE INTO Modifiers (name, price, image_url, is_active) VALUES
-('Each Sauce (Nashville)', 70, 'https://images.unsplash.com/photo-1472476443507-c7a5948772bf?w=600', TRUE),
-('Extra Bread', 50, 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600', TRUE),
-('Extra Sauce', 50, 'https://images.unsplash.com/photo-1585238341267-1cb0a8d4d7ba?w=600', TRUE),
-('Extra Chicken', 500, 'https://images.unsplash.com/photo-1562967914-608f82629710?w=600', TRUE),
-('Extra Cheese', 80, 'https://static.tossdown.com/images/aea58297-7638-4970-9fb3-937fd9588b3b.webp', TRUE),
 ('Extra Shawarma Bread', 50, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600', TRUE),
 ('Add Small Crinkle Fries', 200, 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', TRUE);
