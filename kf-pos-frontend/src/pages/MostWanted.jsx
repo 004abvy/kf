@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=900&q=80";
 const API_BASE = import.meta.env.VITE_API_URL + '/api';
+const FALLBACK_ITEM_IMG = "https://placehold.co/800x600/111111/ffffff?text=No+Image";
 
 export default function MostWanted() {
   const [products, setProducts] = useState([]);
@@ -68,7 +69,13 @@ export default function MostWanted() {
     <>
       <div className="w-full aspect-[4/3] relative overflow-hidden bg-[#1a1a1a]">
         <img
-          src={product.image_url || `https://img.freepik.com/premium-photo/hamburger_1125254-5772.jpg,${encodeURIComponent(product.item_name)}`}          alt={product.item_name}
+          src={product.image_url || FALLBACK_ITEM_IMG}
+          alt={product.item_name}
+          onError={(e) => {
+            if (e.currentTarget.src !== FALLBACK_ITEM_IMG) {
+              e.currentTarget.src = FALLBACK_ITEM_IMG;
+            }
+          }}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent lg:hidden"></div>
