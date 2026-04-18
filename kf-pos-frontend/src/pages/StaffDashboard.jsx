@@ -14,6 +14,7 @@ const socket = io(API_URL, {
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [now, setNow] = useState(Date.now()); 
   const [activeFilter, setActiveFilter] = useState('All'); 
@@ -46,15 +47,21 @@ const StaffDashboard = () => {
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/api/staff/orders`, { cache: 'no-store' });
+      if (!res.ok) {
+        throw new Error(`Fetch failed (${res.status})`);
+      }
       const data = await res.json();
+      const ordersList = Array.isArray(data) ? data : (Array.isArray(data?.orders) ? data.orders : []);
       
       // Force strict First-In, First-Out (Oldest orders first)
-      const sortedOrders = data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      const sortedOrders = ordersList.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
       
       setOrders(sortedOrders);
+      setLoadError('');
       setLoading(false);
     } catch (err) {
       console.error("Fetch error:", err);
+      setLoadError(err.message || 'Could not load kitchen orders');
       setLoading(false);
     }
   };
@@ -226,6 +233,11 @@ const StaffDashboard = () => {
 
       {/* ── HEADER & FILTERS ── */}
       <div className="flex flex-col mb-6 lg:mb-10 gap-4 lg:gap-6">
+        {loadError && (
+          <div className={`rounded-xl border px-4 py-3 text-xs lg:text-sm font-bold ${isDarkMode ? 'bg-red-950/40 text-red-300 border-red-800/60' : 'bg-red-50 text-red-700 border-red-200'}`}>
+            Failed to load orders from `{API_URL}/api/staff/orders`: {loadError}
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter uppercase leading-none ${isDarkMode ? 'text-white' : 'text-black'}`}>KDS Board</h1>
