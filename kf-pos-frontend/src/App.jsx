@@ -24,8 +24,8 @@ import CustomerProfile from './pages/CustomerProfile';
 const AppLayout = ({ children }) => {
   const location = useLocation();
   
-  // Hide Nav and Footer if we are on the /staff route
-const isStaffPage = location.pathname === '/staff' || location.pathname === '/admin';
+  // Hide Nav/Footer on back-office dashboards
+const isStaffPage = ['/staff', '/kitchen', '/admin'].includes(location.pathname);
   return (
     <SmoothScroll>
       {!isStaffPage && <Navbar />}
@@ -57,6 +57,7 @@ export default function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/success" element={<OrderSuccess />} />
               <Route path="/staff" element={<StaffDashboard />} />
+              <Route path="/kitchen" element={<StaffDashboard />} />
               <Route path="/track/:id" element={<OrderTracker />} />
               <Route path="/profile" element={<CustomerProfile />} />   
             </Routes>

@@ -383,10 +383,16 @@ app.post("/api/checkout", async (req, res) => {
 app.get("/api/staff/orders", async (req, res) => {
   try {
     const [orders] = await pool.query(`
-            SELECT o.order_id, o.order_number, o.total_amount, o.order_status as status, o.created_at, o.customer_phone, o.rejection_reason, o.delivery_address,
-                   p.payment_method, p.payment_status, p.transaction_id
+            SELECT o.order_id, o.order_number, o.total_amount,
+                   CASE
+                     WHEN o.order_status = 'Ready' THEN 'On the Way'
+                     WHEN o.order_status = 'Cancelled' AND o.rejection_reason IS NOT NULL THEN 'Rejected'
+                     ELSE o.order_status
+                   END as status,
+                   o.created_at, o.customer_phone, o.rejection_reason, o.delivery_address,
+                   LOWER(p.payment_method) as payment_method, p.payment_status, p.transaction_id
             FROM Orders o LEFT JOIN Payments p ON o.order_id = p.order_id
-            WHERE o.order_status != 'Completed' AND o.order_status != 'Cancelled' AND o.order_status != 'Rejected' ORDER BY o.created_at ASC
+            WHERE o.order_status != 'Completed' AND o.order_status != 'Cancelled' ORDER BY o.created_at ASC
         `);
 
     for (let order of orders) {
@@ -416,6 +422,14 @@ app.post("/api/staff/update-status", async (req, res) => {
     const { orderId, newStatus, newPaymentStatus, rejectionReason } = req.body;
     if (!orderId || !newStatus)
       return res.status(400).json({ message: "Missing required fields" });
+
+    // Map UI statuses to DB enum-safe values.
+    const dbStatus =
+      newStatus === "Rejected"
+        ? "Cancelled"
+        : newStatus === "On the Way"
+          ? "Ready"
+          : newStatus;
 
     const [orderData] = await pool.query(
       "SELECT customer_phone, order_number, total_amount FROM Orders WHERE order_id = ?",
@@ -450,7 +464,7 @@ app.post("/api/staff/update-status", async (req, res) => {
 
     await pool.query(
       "UPDATE Orders SET order_status = ?, rejection_reason = ? WHERE order_id = ?",
-      [newStatus, rejectionReason || null, orderId],
+      [dbStatus, rejectionReason || null, orderId],
     );
     if (newPaymentStatus)
       await pool.query(
@@ -505,7 +519,14 @@ app.post("/api/staff/update-status", async (req, res) => {
 app.get("/api/orders/status/:id", async (req, res) => {
   try {
     const [order] = await pool.query(
-      "SELECT order_status as status, rejection_reason FROM Orders WHERE order_number = ? OR order_id = ?",
+      `SELECT
+         CASE
+           WHEN order_status = 'Ready' THEN 'On the Way'
+           WHEN order_status = 'Cancelled' AND rejection_reason IS NOT NULL THEN 'Rejected'
+           ELSE order_status
+         END as status,
+         rejection_reason
+       FROM Orders WHERE order_number = ? OR order_id = ?`,
       [req.params.id, req.params.id],
     );
     if (order.length === 0)

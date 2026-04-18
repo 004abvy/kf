@@ -314,6 +314,8 @@ const StaffDashboard = () => {
             </div>
           )}
           {!loading && filteredOrders.map((order) => {
+            const paymentMethod = String(order.payment_method || '').toLowerCase();
+            const paymentStatus = String(order.payment_status || '').toLowerCase();
             
             // 👇 LIVE TIMER MATH & PROGRESS BAR 👇
             const orderTime = new Date(order.created_at).getTime();
@@ -420,14 +422,14 @@ const StaffDashboard = () => {
 
               {/* ACTION BUTTONS (Bump/Dispatch) */}
               <div className="flex flex-row gap-1.5 lg:gap-2 mt-auto pt-1 flex-shrink-0">
-                {order.status === 'Pending' && order.payment_method === 'wallet' && order.payment_status === 'Pending Verification' && (
+                {order.status === 'Pending' && paymentMethod === 'wallet' && paymentStatus === 'pending verification' && (
                   <>
                     <button onClick={() => updateStatus(order.order_id, 'Preparing', 'Paid')} className="flex-1 bg-emerald-600 text-white py-2.5 lg:py-3.5 rounded-lg font-black text-[8px] lg:text-xs uppercase hover:bg-emerald-500 transition-transform active:scale-95 shadow-md">Verify & Bump</button>
                     <button onClick={() => setRejectingOrder(order)} className={`px-2 lg:px-4 py-2.5 lg:py-3.5 rounded-lg font-black text-[8px] lg:text-xs uppercase hover:bg-red-600 hover:text-white transition-all border ${isDarkMode ? 'bg-zinc-800 text-zinc-400 border-zinc-700' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>Reject</button>
                   </>
                 )}
 
-                {order.status === 'Pending' && order.payment_method === 'cod' && (
+                {order.status === 'Pending' && paymentMethod === 'cod' && (
                   <>
                     <button onClick={() => updateStatus(order.order_id, 'Preparing', null)} className="flex-1 bg-orange-600 text-white py-2.5 lg:py-3.5 rounded-lg font-black text-[8px] lg:text-xs uppercase hover:bg-orange-500 transition-transform active:scale-95 shadow-md">Bump to Prep</button>
                     <button onClick={() => setRejectingOrder(order)} className={`px-2 lg:px-4 py-2.5 lg:py-3.5 rounded-lg font-black text-[8px] lg:text-xs uppercase hover:bg-red-600 hover:text-white transition-all border ${isDarkMode ? 'bg-zinc-800 text-zinc-400 border-zinc-700' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>Reject</button>
