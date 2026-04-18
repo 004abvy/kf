@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { motion } from "framer-motion";
 
-const HERO_IMG = "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=900&q=80";
+const HERO_IMG = "https://img.freepik.com/free-vector/burger-fast-food-concept-hand-drawn-sketch-vector-illustration_354956-1020.jpg?semt=ais_hybrid&w=740&q=80";
 const API_BASE = import.meta.env.VITE_API_URL + '/api';
 const FALLBACK_ITEM_IMG = "https://placehold.co/800x600/111111/ffffff?text=No+Image";
 
@@ -137,7 +137,7 @@ export default function MostWanted() {
             transition={{ duration: 0.6 }}
             className="relative w-full h-[250px] md:h-[400px] rounded-3xl overflow-hidden shadow-2xl mb-8"
           >
-            <img src={product.image_url || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&h=400&auto=format&fit=crop"} alt="Popular dishes" className="w-full h-full object-cover" />
+            <img src={HERO_IMG} alt="Popular dishes" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent p-6 md:p-12 flex flex-col justify-center">
               <h3 className="text-2xl md:text-4xl font-extrabold uppercase tracking-wide leading-tight mb-4 text-[#ff007f]">
                 Fan Favorites
@@ -179,7 +179,7 @@ export default function MostWanted() {
           
           {/* Sticky Left Hero */}
           <div className="col-span-5 sticky top-[150px] h-[75vh] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl group">
-            <img src={product.image_url || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&h=400&auto=format&fit=crop"} alt="Popular dishes" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={HERO_IMG} alt="Popular dishes" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
               <p className="text-3xl xl:text-4xl font-extrabold uppercase tracking-wide leading-tight mb-6 max-w-[90%]">
                 See Our Most Popular Products
