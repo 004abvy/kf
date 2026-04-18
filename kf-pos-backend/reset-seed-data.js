@@ -50,6 +50,8 @@ async function resetSeedData() {
     .filter((stmt) => !/^CREATE DATABASE IF NOT EXISTS/i.test(stmt))
     .filter((stmt) => !/^USE /i.test(stmt));
 
+  const seedStatements = statements.filter((stmt) => /^INSERT\s+/i.test(stmt));
+
   const pool = mysql.createPool(getDbConfig());
   const conn = await pool.getConnection();
 
@@ -79,7 +81,7 @@ async function resetSeedData() {
 
     await conn.query("SET FOREIGN_KEY_CHECKS = 1");
 
-    for (const statement of statements) {
+    for (const statement of seedStatements) {
       await conn.query(statement);
     }
 
