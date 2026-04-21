@@ -281,7 +281,7 @@ const Menu = () => {
             <div className="h-[2px] flex-1 bg-gradient-to-r from-zinc-900 to-transparent" />
           </div>
               {/* 3 columns by default, 4 columns only on large desktop/laptops */}
-            <div className="grid grid-cols-3 xl:grid-cols-4 gap-1 sm:gap-2 md:gap-3"> 
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-1 sm:gap-2 md:gap-3"> 
               {category.products.map((item, idx) => {
               const minPrice = Math.min(...item.variations.map(v => parseFloat(v.price)));
               return (
@@ -301,8 +301,10 @@ const Menu = () => {
                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   </div>
                   <div className="flex flex-col gap-0.5 sm:gap-1 flex-1">
-                    <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-zinc-100 group-hover:text-white transition-colors leading-tight line-clamp-2">{item.item_name}</h3>
-                    <div className="flex items-end justify-between mt-auto pt-1 sm:pt-1.5 border-t border-zinc-900/50">
+<h3 className="text-lg sm:text-xl md:text-2xl font-bold text-zinc-100 group-hover:text-white transition-colors leading-tight line-clamp-2">
+  {item.item_name}
+</h3>
+            <div className="flex items-end justify-between mt-auto pt-1 sm:pt-1.5 border-t border-zinc-900/50">
                       <div className="flex flex-col">
                         <span className="text-[6px] sm:text-[8px] text-zinc-500 font-bold uppercase tracking-wide mb-0.5">
                           {item.variations.length > 1 ? 'From' : 'Price'}
@@ -332,104 +334,121 @@ const Menu = () => {
     <div className="bg-[#050505] text-white min-h-screen flex flex-col font-sans relative">
 
       {/* ── MODAL ── */}
+{/* ── MODAL ── */}
       <AnimatePresence>
         {selectedItem && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedItem(null)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative bg-zinc-900 w-full max-w-md sm:max-w-lg rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 shadow-2xl border border-zinc-800 flex flex-col max-h-[90vh]">
-              <button onClick={() => setSelectedItem(null)} className="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl">✕</button>
-              <h2 className="text-xl sm:text-2xl font-black italic uppercase mb-1 pr-6">{selectedItem.item_name}</h2>
-{selectedItem.description && (
-  <p className="text-base sm:text-lg font-bold text-zinc-300 bg-zinc-950 p-3 sm:p-4 rounded-xl border-l-4 border-[#e0457b] mb-4 leading-relaxed shadow-inner whitespace-pre-line">
-    {selectedItem.description}
-  </p>
-)}
-              <p className="text-base sm:text-lg text-[#e0457b] font-black tracking-tighter border-b border-zinc-800 pb-3 sm:pb-4 mb-3 sm:mb-4">
+            
+            {/* Increased max-width and padding on the main modal container */}
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative bg-zinc-900 w-full max-w-lg sm:max-w-2xl rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 shadow-2xl border border-zinc-800 flex flex-col max-h-[90vh]">
+              
+              <button onClick={() => setSelectedItem(null)} className="absolute top-5 right-5 text-zinc-500 hover:text-white text-2xl sm:text-3xl">✕</button>
+              
+              <h2 className="text-2xl sm:text-3xl font-black italic uppercase mb-2 pr-8">{selectedItem.item_name}</h2>
+              
+              {selectedItem.description && (
+                <p className="text-lg sm:text-xl font-bold text-zinc-300 bg-zinc-950 p-4 sm:p-5 rounded-xl border-l-4 border-[#e0457b] mb-4 leading-relaxed shadow-inner whitespace-pre-line">
+                  {selectedItem.description}
+                </p>
+              )}
+              
+              <p className="text-xl sm:text-2xl text-[#e0457b] font-black tracking-tighter border-b border-zinc-800 pb-4 sm:pb-5 mb-4 sm:mb-5">
                 {selectedVariation ? parseFloat(selectedVariation.price).toLocaleString() : Math.min(...selectedItem.variations.map(v => parseFloat(v.price))).toLocaleString()} PKR
-                <span className="text-[8px] sm:text-[10px] text-zinc-500 font-bold ml-1 tracking-widest uppercase">Base Price</span>
+                <span className="text-xs sm:text-sm text-zinc-500 font-bold ml-2 tracking-widest uppercase">Base Price</span>
               </p>
-              <div data-lenis-prevent="true" className="flex-1 overflow-y-auto no-scrollbar pr-1 pb-2">
+              
+              <div data-lenis-prevent="true" className="flex-1 overflow-y-auto no-scrollbar pr-2 pb-2">
                 {selectedItem.variations.length > 1 && (
-                  <div className="mb-4 sm:mb-6">
-                    <p className="text-[8px] sm:text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Select Size <span className="text-red-500">*</span></p>
-                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                  <div className="mb-6 sm:mb-8">
+                    <p className="text-xs sm:text-sm text-zinc-400 font-black uppercase tracking-[0.2em] mb-3">Select Size <span className="text-red-500">*</span></p>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {selectedItem.variations.map(variation => (
-                        <button key={variation.variation_id} onClick={() => setSelectedVariation(variation)} className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg sm:rounded-xl border-2 font-bold uppercase transition-all text-left ${selectedVariation?.variation_id === variation.variation_id ? 'border-[#e0457b] bg-[#e0457b]/10 text-white' : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-800/50'}`}>
-                          <span className="block text-[10px] sm:text-xs leading-none">{variation.size_name}</span>
-                          <span className="block text-[8px] sm:text-[10px] mt-1 text-zinc-500">{parseFloat(variation.price).toLocaleString()} PKR</span>
+                        <button key={variation.variation_id} onClick={() => setSelectedVariation(variation)} className={`py-2 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl border-2 font-bold uppercase transition-all text-left ${selectedVariation?.variation_id === variation.variation_id ? 'border-[#e0457b] bg-[#e0457b]/10 text-white' : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-800/50'}`}>
+                          <span className="block text-sm sm:text-base leading-none">{variation.size_name}</span>
+                          <span className="block text-xs sm:text-sm mt-1.5 text-zinc-500">{parseFloat(variation.price).toLocaleString()} PKR</span>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
+                
                 {isModLoading ? (
-                  <p className="text-zinc-500 text-[10px] sm:text-xs uppercase tracking-widest animate-pulse">Loading Customizations...</p>
+                  <p className="text-zinc-500 text-xs sm:text-sm uppercase tracking-widest animate-pulse">Loading Customizations...</p>
                 ) : itemModifiers.length > 0 ? (
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <p className="text-[8px] sm:text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Add-ons & Modifiers</p>
+                  <div className="space-y-2 sm:space-y-3">
+                    <p className="text-xs sm:text-sm text-zinc-400 font-black uppercase tracking-[0.2em] mb-3">Add-ons & Modifiers</p>
                     {itemModifiers.map((mod) => {
                       const isChecked = selectedMods.some(m => m.modifier_id === mod.modifier_id);
                       return (
-                        <div key={mod.modifier_id} onClick={() => toggleModifier(mod)} className={`flex justify-between items-center p-2 sm:p-3 rounded-lg sm:rounded-xl border cursor-pointer transition-all ${isChecked ? 'bg-[#e0457b]/10 border-[#e0457b]' : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'}`}>
-                          <div className="flex items-center gap-2 sm:gap-3">
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 flex items-center justify-center ${isChecked ? 'border-[#e0457b] bg-[#e0457b]' : 'border-zinc-600'}`}>
-                              {isChecked && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />}
+                        <div key={mod.modifier_id} onClick={() => toggleModifier(mod)} className={`flex justify-between items-center p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all ${isChecked ? 'bg-[#e0457b]/10 border-[#e0457b]' : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'}`}>
+                          <div className="flex items-center gap-3 sm:gap-4">
+                            {/* Increased checkbox size */}
+                            <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center ${isChecked ? 'border-[#e0457b] bg-[#e0457b]' : 'border-zinc-600'}`}>
+                              {isChecked && <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-white rounded-full" />}
                             </div>
-                            <span className={`font-bold uppercase text-[10px] sm:text-xs ${isChecked ? 'text-white' : 'text-zinc-300'}`}>{mod.name}</span>
+                            <span className={`font-bold uppercase text-sm sm:text-base ${isChecked ? 'text-white' : 'text-zinc-300'}`}>{mod.name}</span>
                           </div>
-                          <span className="font-bold text-[#e0457b] text-xs sm:text-sm">+ {parseFloat(mod.price)} PKR</span>
+                          <span className="font-bold text-[#e0457b] text-sm sm:text-base">+ {parseFloat(mod.price)} PKR</span>
                         </div>
                       );
                     })}
                   </div>
                 ) : (
-                  <p className="text-zinc-500 text-[10px] sm:text-xs italic py-2">No customizations available.</p>
+                  <p className="text-zinc-500 text-xs sm:text-sm italic py-2">No customizations available.</p>
                 )}
               </div>
-              <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t border-zinc-800 flex gap-2 sm:gap-3">
-                <div className="flex items-center bg-zinc-950 rounded-lg sm:rounded-xl border border-zinc-800 px-1 py-0.5">
-                  <button onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-zinc-500 hover:text-white transition-colors">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4" /></svg>
+              
+              <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-zinc-800 flex gap-3 sm:gap-4">
+                <div className="flex items-center bg-zinc-950 rounded-xl sm:rounded-2xl border-2 border-zinc-800 px-2 py-1">
+                  {/* Increased quantity control buttons */}
+                  <button onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))} className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-zinc-500 hover:text-white transition-colors">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4" /></svg>
                   </button>
-                  <span className="text-white font-black text-sm sm:text-base w-5 sm:w-6 text-center">{modalQuantity}</span>
-                  <button onClick={() => setModalQuantity(modalQuantity + 1)} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-zinc-500 hover:text-white transition-colors">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                  <span className="text-white font-black text-lg sm:text-xl w-8 sm:w-10 text-center">{modalQuantity}</span>
+                  <button onClick={() => setModalQuantity(modalQuantity + 1)} className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-zinc-500 hover:text-white transition-colors">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
                   </button>
                 </div>
-                <button onClick={confirmAddToCart} disabled={!selectedVariation} className={`flex-1 py-3 sm:py-4 rounded-lg sm:rounded-xl font-black uppercase tracking-widest transition-all flex justify-between items-center px-3 sm:px-4 text-[10px] sm:text-xs ${selectedVariation ? 'bg-[#e0457b] hover:bg-[#c93c6d] text-white shadow-lg active:scale-95' : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'}`}>
+                
+                {/* Increased Add to Cart button */}
+                <button onClick={confirmAddToCart} disabled={!selectedVariation} className={`flex-1 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest transition-all flex justify-between items-center px-4 sm:px-6 text-sm sm:text-base ${selectedVariation ? 'bg-[#e0457b] hover:bg-[#c93c6d] text-white shadow-lg active:scale-95' : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'}`}>
                   <span>{selectedVariation ? "Add to Cart" : "Select Size"}</span>
                   {selectedVariation && <span>{((parseFloat(selectedVariation.price) + selectedMods.reduce((s, m) => s + parseFloat(m.price), 0)) * modalQuantity).toLocaleString()} PKR</span>}
                 </button>
               </div>
+              
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* ── MOBILE CATEGORY BAR ── */}
-      <div className="lg:hidden sticky top-[80px] z-30 bg-black/90 backdrop-blur-xl border-b border-zinc-800 w-full">
-        <div className="overflow-x-auto no-scrollbar w-full">
-          <div className="flex gap-1 px-4 py-3 w-max">
-            {menuData.map((cat) => {
-              const stringId = String(cat.category_id);
-              const isActive = activeCategoryId === stringId;
-              return (
-                <button
-                  key={stringId}
-                  onClick={() => scrollToCategory(stringId)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
-                    isActive
-                      ? 'bg-[#e0457b] text-white shadow-md'
-                      : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+
+{/* ── MOBILE CATEGORY BAR ── */}
+<div className="lg:hidden sticky top-[80px] z-30 bg-black/90 backdrop-blur-xl border-b border-zinc-800 w-full">
+  <div className="overflow-x-auto no-scrollbar w-full">
+    <div className="flex gap-2 px-5 py-4 w-max">
+      {menuData.map((cat) => {
+        const stringId = String(cat.category_id);
+        const isActive = activeCategoryId === stringId;
+
+        return (
+          <button
+            key={stringId}
+            onClick={() => scrollToCategory(stringId)}
+            className={`whitespace-nowrap px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all ${
+              isActive
+                ? 'bg-[#e0457b] text-white shadow-md scale-105'
+                : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+            }`}
+          >
+            {cat.name}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</div>
 
       {/* ── LEFT SIDEBAR ── */}
       <aside data-lenis-prevent className="fixed left-0 border-r border-zinc-900 bg-black/40 backdrop-blur-2xl hidden lg:flex flex-col z-40 overflow-y-auto no-scrollbar" style={{ width: `${SIDEBAR_WIDTH}px`, top: `${TOP_NAV_HEIGHT}px`, height: `calc(100vh - ${TOP_NAV_HEIGHT}px)`, padding: '0px 24px 40px 24px' }}>
