@@ -340,7 +340,7 @@ const Menu = () => {
               <button onClick={() => setSelectedItem(null)} className="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl">✕</button>
               <h2 className="text-xl sm:text-2xl font-black italic uppercase mb-1 pr-6">{selectedItem.item_name}</h2>
 {selectedItem.description && (
-  <p className="text-base sm:text-lg font-bold text-zinc-300 bg-zinc-950 p-3 mt-4 sm:p-4 rounded-xl border-l-4 border-[#e0457b] mb-4 leading-relaxed shadow-inner">
+  <p className="text-base sm:text-lg font-bold text-zinc-300 bg-zinc-950 p-3 sm:p-4 rounded-xl border-l-4 border-[#e0457b] mb-4 leading-relaxed shadow-inner whitespace-pre-line">
     {selectedItem.description}
   </p>
 )}
