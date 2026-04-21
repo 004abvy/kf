@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 import { StaggerText } from "../components/AnimatedText";
@@ -82,11 +83,12 @@ const STYLES = `
 `;
 
 /* ─── Card ─────────────────────────────────────────────────── */
-function CategoryCard({ title, img, onEnter, onLeave }) {
+function CategoryCard({ title, img, onEnter, onLeave, onClick }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
+      onClick={onClick}
       onMouseEnter={() => { setHovered(true);  onEnter && onEnter(); }}
       onMouseLeave={() => { setHovered(false); onLeave && onLeave(); }}
       className="cat-card"
@@ -95,6 +97,7 @@ function CategoryCard({ title, img, onEnter, onLeave }) {
           ? "1px solid rgba(255,255,255,0.25)"
           : "1px solid rgba(255,255,255,0.08)",
         transition: "border-color 0.35s ease",
+        cursor: "pointer",
       }}
     >
       {/* Label */}
@@ -128,7 +131,7 @@ function CategoryCard({ title, img, onEnter, onLeave }) {
 }
 
 /* ─── Infinite marquee row ─────────────────────────────────── */
-function MarqueeRow({ items, direction }) {
+function MarqueeRow({ items, direction, onCategoryClick }) {
   const [paused, setPaused] = useState(false);
   const doubled = [...items, ...items];
 
@@ -140,6 +143,7 @@ function MarqueeRow({ items, direction }) {
             key={`${cat.id}-${i}`}
             title={cat.title}
             img={cat.img}
+            onClick={() => onCategoryClick(cat.id)}
             onEnter={() => setPaused(true)}
             onLeave={() => setPaused(false)}
           />
@@ -154,6 +158,7 @@ export default function CategoriesPage() {
   const [rowTop, setRowTop] = useState([]);
   const [rowBottom, setRowBottom] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -182,6 +187,10 @@ export default function CategoriesPage() {
     loadCategories();
   }, []);
 
+  const handleCategoryClick = (categoryId) => {
+    navigate(`/menu?categoryId=${categoryId}`);
+  };
+
   if (loading) return null;
   
   return (
@@ -205,11 +214,11 @@ export default function CategoriesPage() {
 
       {/* Row 1 */}
       <div style={{ marginBottom: "50px" }}>
-        <MarqueeRow items={rowTop} direction="left" />
+        <MarqueeRow items={rowTop} direction="left" onCategoryClick={handleCategoryClick} />
       </div>
 
       {/* Row 2 */}
-      <MarqueeRow items={rowBottom} direction="right" />
+      <MarqueeRow items={rowBottom} direction="right" onCategoryClick={handleCategoryClick} />
     </div>
   );
 }

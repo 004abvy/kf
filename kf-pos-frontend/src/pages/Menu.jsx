@@ -36,7 +36,16 @@ const Menu = () => {
   // Handle itemId from query parameter (from MostWanted click)
   useEffect(() => {
     const itemId = searchParams.get('itemId');
-    if (itemId && menuData.length > 0) {
+    const categoryId = searchParams.get('categoryId');
+    
+    if (menuData.length === 0) return;
+    
+    if (categoryId) {
+      // Just scroll to the category, don't open a modal
+      scrollToCategory(categoryId);
+      // Clear the query parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (itemId) {
       // Find the item in menuData
       let targetItem = null;
       let targetCategoryId = null;
