@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const HERO_IMG = "https://img.freepik.com/free-vector/burger-fast-food-concept-hand-drawn-sketch-vector-illustration_354956-1020.jpg?semt=ais_hybrid&w=740&q=80";
 const API_BASE = import.meta.env.VITE_API_URL + '/api';
@@ -9,7 +10,8 @@ const FALLBACK_ITEM_IMG = "https://placehold.co/800x600/111111/ffffff?text=No+Im
 export default function MostWanted() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { cartItems, addToCart } = useCart();
+  const { cartItems } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadFeaturedItems = async () => {
@@ -94,7 +96,7 @@ export default function MostWanted() {
 
         <motion.button
           whileTap={{ scale: 0.9 }}
-          onClick={() => addToCart(product)}
+          onClick={() => navigate(`/menu?itemId=${product.item_id}`)}
           className={`mt-4 lg:mt-0 self-end lg:self-auto flex-shrink-0 flex items-center justify-center w-10 h-10 lg:w-8 lg:h-8 rounded-full shadow-md lg:shadow-none transition-colors ${
             qty > 0 
               ? "bg-[#ff007f] text-white font-bold lg:text-xs" 
@@ -145,7 +147,10 @@ export default function MostWanted() {
               <p className="text-sm md:text-lg text-zinc-200 mb-6 max-w-sm">
                 Discover the dishes our customers can't get enough of.
               </p>
-              <button className="self-start px-6 py-3 rounded-full bg-[#ff007f] text-white font-bold tracking-widest text-xs uppercase shadow-lg">
+              <button 
+                onClick={() => navigate('/menu')}
+                className="self-start px-6 py-3 rounded-full bg-[#ff007f] text-white font-bold tracking-widest text-xs uppercase shadow-lg"
+              >
                 Order Now
               </button>
             </div>
@@ -185,7 +190,10 @@ export default function MostWanted() {
                 See Our Most Popular Products
               </p>
               <div>
-                <button className="px-8 py-3 rounded-full bg-transparent border-2 border-[#ff007f] text-white font-bold tracking-widest text-sm uppercase transition-all duration-300 hover:bg-[#ff007f]">
+                <button 
+                  onClick={() => navigate('/menu')}
+                  className="px-8 py-3 rounded-full bg-transparent border-2 border-[#ff007f] text-white font-bold tracking-widest text-sm uppercase transition-all duration-300 hover:bg-[#ff007f]"
+                >
                   Order Now
                 </button>
               </div>

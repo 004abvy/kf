@@ -79,7 +79,8 @@ async function initializeDatabase() {
         .map(stmt => stmt.trim())
         .filter(stmt => stmt.length > 0)
         .filter(stmt => !stmt.match(/^CREATE DATABASE IF NOT EXISTS/i))
-        .filter(stmt => !stmt.match(/^USE /i));
+        .filter(stmt => !stmt.match(/^USE /i))
+        .filter(stmt => !stmt.match(/^INSERT\s+/i));
 
       console.log(`Found ${statements.length} SQL statements to execute`);
 
@@ -95,7 +96,7 @@ async function initializeDatabase() {
           }
         } catch (sqlError) {
           // Log which statement failed but don't crash on schema already exists
-          if (sqlError.code === "ER_TABLE_EXISTS_ERROR" || sqlError.code === "ER_DUP_KEYNAME") {
+          if (sqlError.code === "ER_TABLE_EXISTS_ERROR" || sqlError.code === "ER_DUP_KEYNAME" || sqlError.code === "ER_DUP_ENTRY") {
             console.log(`⚠️ Skipped (already exists): ${statement.substring(0, 50)}...`);
           } else {
             console.error("❌ SQL Error:", sqlError.code, sqlError.message);

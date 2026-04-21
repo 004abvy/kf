@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion";
 import { useLenis } from "../components/SmoothScroll";
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const SIDEBAR_WIDTH = 340;
 const CART_WIDTH = 360;
@@ -30,7 +30,40 @@ const Menu = () => {
   const lenis = useLenis();
   const { cartItems, addToCart, updateQuantity, removeFromCart, subtotal, totalItems } = useCart();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const API_BASE = import.meta.env.VITE_API_URL + '/api';
+
+  // Handle itemId from query parameter (from MostWanted click)
+  useEffect(() => {
+    const itemId = searchParams.get('itemId');
+    if (itemId && menuData.length > 0) {
+      // Find the item in menuData
+      let targetItem = null;
+      let targetCategoryId = null;
+      
+      for (const category of menuData) {
+        const foundProduct = category.products.find(p => String(p.item_id) === String(itemId));
+        if (foundProduct) {
+          targetItem = foundProduct;
+          targetCategoryId = category.category_id;
+          break;
+        }
+      }
+      
+      if (targetItem && targetCategoryId) {
+        // Scroll to the category first
+        setTimeout(() => {
+          scrollToCategory(targetCategoryId);
+          // Then open the modal after a short delay
+          setTimeout(() => {
+            openItemModal(targetItem);
+            // Clear the query parameter
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }, 500);
+        }, 100);
+      }
+    }
+  }, [menuData, searchParams]);
 
   useEffect(() => {
     const loadEntireMenu = async () => {
