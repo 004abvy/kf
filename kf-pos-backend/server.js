@@ -245,7 +245,7 @@ app.get("/api/items/:categoryId", async (req, res) => {
   try {
     const [rows] = await pool.query(
       `
-            SELECT m.item_id, m.name as item_name, m.image_url, v.variation_id, v.size_name, v.price 
+            SELECT m.item_id, m.name as item_name, m.description, m.image_url, v.variation_id, v.size_name, v.price 
             FROM MenuItems m JOIN ItemVariations v ON m.item_id = v.item_id
             WHERE m.category_id = ? AND m.is_active = TRUE`,
       [req.params.categoryId],

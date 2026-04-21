@@ -93,6 +93,7 @@ const Menu = () => {
                   acc[groupKey] = {
                     item_id: curr.item_id,
                     item_name: curr.item_name,
+                    description: curr.description,
                     image_url: curr.image_url,
                     variations: []
                   };
@@ -338,6 +339,9 @@ const Menu = () => {
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative bg-zinc-900 w-full max-w-md sm:max-w-lg rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 shadow-2xl border border-zinc-800 flex flex-col max-h-[90vh]">
               <button onClick={() => setSelectedItem(null)} className="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl">✕</button>
               <h2 className="text-xl sm:text-2xl font-black italic uppercase mb-1 pr-6">{selectedItem.item_name}</h2>
+              {selectedItem.description && (
+                <p className="text-xs sm:text-sm text-zinc-400 mb-3 leading-relaxed">{selectedItem.description}</p>
+              )}
               <p className="text-base sm:text-lg text-[#e0457b] font-black tracking-tighter border-b border-zinc-800 pb-3 sm:pb-4 mb-3 sm:mb-4">
                 {selectedVariation ? parseFloat(selectedVariation.price).toLocaleString() : Math.min(...selectedItem.variations.map(v => parseFloat(v.price))).toLocaleString()} PKR
                 <span className="text-[8px] sm:text-[10px] text-zinc-500 font-bold ml-1 tracking-widest uppercase">Base Price</span>
