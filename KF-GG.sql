@@ -181,6 +181,8 @@ INSERT INTO MenuItems (item_id, category_id, name, description, image_url) VALUE
 (3, 1, 'Fish Cracker', 'Crispy, deep-fried crackers with a subtle hint of seafood flavor.', 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600'),
 (4, 1, 'Drum Sticks (4 Piece)', 'Crispy and juicy deep-fried chicken drumsticks, seasoned to perfection.', 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600');
 
+
+
 INSERT INTO ItemVariations (item_id, size_name, price) VALUES
 (1, 'Half', 220), (1, 'Full', 850), (2, 'Half', 220), (2, 'Full', 850), 
 (3, 'Regular', 400), (4, 'Regular', 1000);
