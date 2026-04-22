@@ -14,15 +14,12 @@ const LoginPage = () => {
   }, [isLoggedIn, navigate]);
 
   // ── STATE ──
-  const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
-    password: "",
-    role: "staff" // Default to staff
+    password: ""
   });
 
   const handleChange = (e) => {
@@ -35,12 +32,10 @@ const LoginPage = () => {
     setIsLoading(true);
     setMessage({ text: "", type: "" });
 
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-    // Using 127.0.0.1 instead of localhost for higher reliability in some network setups
     const API_BASE = "http://127.0.0.1:3000";
 
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -61,18 +56,16 @@ const LoginPage = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      if (isLogin) {
-        // Trigger global Auth update immediately
-        login(data.user, data.token);
-        setMessage({ text: `Welcome back, ${data.user.name}!`, type: "success" });
-        setTimeout(() => navigate("/menu"), 1000);
-      } else {
-        setMessage({ text: "Account created! You can now sign in.", type: "success" });
-        setIsLogin(true);
-      }
+      // Trigger global Auth update immediately
+      login(data.user, data.token);
+      setMessage({ text: `Welcome back, ${data.user.name}!`, type: "success" });
+
+      // Redirect based on user role
+      const redirectPath = data.user.role === 'admin' ? '/admin' : '/staff';
+      setTimeout(() => navigate(redirectPath), 1000);
     } catch (err) {
-       console.error("Auth Exception:", err);
-       setMessage({ text: err.name === "TypeError" ? "Could not connect to server." : err.message, type: "error" });
+      console.error("Auth Exception:", err);
+      setMessage({ text: err.name === "TypeError" ? "Could not connect to server." : err.message, type: "error" });
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +78,11 @@ const LoginPage = () => {
         
         {/* Header */}
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-black tracking-tighter uppercase ">
-            {isLogin ? "Login." : "Join the Team."}
+          <h1 className="text-4xl font-black tracking-tighter uppercase">
+            Login.
           </h1>
           <p className="mt-2 text-sm font-bold text-zinc-400 uppercase tracking-widest">
-            {isLogin ? "Welcome back to Kitchen Flow" : "Create your staff account"}
+            Welcome back to Kitchen Flow
           </p>
         </div>
 
@@ -103,22 +96,6 @@ const LoginPage = () => {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          
-          {!isLogin && (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest ml-1">Full Name</label>
-              <input
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Staff Member Name"
-                required
-                className="w-full rounded-xl border-2 border-black bg-white px-5 py-3.5 text-black font-bold outline-none focus:bg-zinc-50 transition-colors"
-              />
-            </div>
-          )}
-
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-black uppercase tracking-widest ml-1">Email / ID</label>
             <input
@@ -133,10 +110,7 @@ const LoginPage = () => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between items-center px-1">
-              <label className="text-[10px] font-black uppercase tracking-widest">Password</label>
-              {isLogin && <button type="button" className="text-[9px] font-black underline uppercase opacity-50 hover:opacity-100">Forgot?</button>}
-            </div>
+            <label className="text-[10px] font-black uppercase tracking-widest ml-1">Password</label>
             <input
               name="password"
               type="password"
@@ -155,20 +129,9 @@ const LoginPage = () => {
               isLoading ? "opacity-50" : ""
             }`}
           >
-            {isLoading ? "Checking..." : isLogin ? "Sign In" : "Register"}
+            {isLoading ? "Checking..." : "Sign In"}
           </button>
         </form>
-
-        <p className="mt-8 text-center text-[10px] font-black uppercase tracking-widest text-zinc-300">
-          {isLogin ? "New staff member? " : "Already registered? "}
-          <button 
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-black hover:underline underline-offset-4"
-          >
-            {isLogin ? "Register Now" : "Sign In"}
-          </button>
-        </p>
 
       </div>
     </div>

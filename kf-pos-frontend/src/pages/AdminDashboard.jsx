@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const AdminDashboard = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     revenue: 0,
     orderCount: 0,
@@ -20,7 +24,13 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/stats`, { cache: 'no-store' });
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/admin/stats`, {
+        cache: 'no-store',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.message || 'Failed to fetch stats');
@@ -55,9 +65,20 @@ const AdminDashboard = () => {
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Manager Overview</p>
           <h1 className="text-6xl font-black tracking-tighter uppercase">Business Insights.</h1>
         </div>
-        <div className="text-right">
-          <p className="text-[10px] font-black uppercase text-gray-400 mb-1">Last Updated</p>
-          <p className="font-mono font-bold text-xs">{new Date().toLocaleTimeString()}</p>
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-[10px] font-black uppercase text-gray-400 mb-1">Last Updated</p>
+            <p className="font-mono font-bold text-xs">{new Date().toLocaleTimeString()}</p>
+          </div>
+          <button
+            onClick={() => {
+              logout();
+              navigate('/login');
+            }}
+            className="px-4 py-2 rounded-full text-xs font-black uppercase border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+          >
+            Logout
+          </button>
         </div>
       </div>
 

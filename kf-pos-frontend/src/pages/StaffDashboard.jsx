@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import io from 'socket.io-client'; 
+import io from 'socket.io-client';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom'; 
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +14,8 @@ const socket = io(API_URL, {
 });
 
 const StaffDashboard = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -46,7 +50,13 @@ const StaffDashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/staff/orders`, { cache: 'no-store' });
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/staff/orders`, {
+        cache: 'no-store',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!res.ok) {
         throw new Error(`Fetch failed (${res.status})`);
       }
@@ -105,12 +115,16 @@ const StaffDashboard = () => {
 
   const updateStatus = async (orderId, newStatus, newPaymentStatus = null, reason = null) => {
     try {
+      const token = localStorage.getItem('kf_token');
       const payload = { orderId, newStatus, newPaymentStatus };
       if (reason) payload.rejectionReason = reason;
 
       await fetch(`${API_URL}/api/staff/update-status`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
       
@@ -253,6 +267,17 @@ const StaffDashboard = () => {
                 <span className="text-sm lg:text-xl font-mono font-black text-[#e0457b]">14m</span>
               </div>
               
+              {/* Logout Button */}
+              <button
+                onClick={() => {
+                  logout();
+                  navigate('/login');
+                }}
+                className={`px-3 py-2 lg:px-5 lg:py-3 rounded-full text-[10px] lg:text-sm font-black uppercase flex items-center transition-all border shadow-sm ${isDarkMode ? 'bg-red-500/10 border-red-500/50 text-red-400 hover:bg-red-500/20' : 'bg-red-50 border-red-200 text-red-500 hover:bg-red-100'}`}
+              >
+                Logout
+              </button>
+
               {/* 🔥 THEME TOGGLE BUTTON 🔥 */}
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)} 

@@ -13,6 +13,7 @@ import SmoothScroll from './components/SmoothScroll';
 import OrderSuccess from './pages/OrderSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import StaffDashboard from './pages/StaffDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -54,12 +55,12 @@ export default function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/pos" element={<div className="p-8 text-center text-2xl font-bold mt-20">Your POS UI Goes Here</div>} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
               <Route path="/success" element={<OrderSuccess />} />
-              <Route path="/staff" element={<StaffDashboard />} />
-              <Route path="/kitchen" element={<StaffDashboard />} />
+              <Route path="/staff" element={<ProtectedRoute allowedRoles={['staff', 'admin']}><StaffDashboard /></ProtectedRoute>} />
+              <Route path="/kitchen" element={<ProtectedRoute allowedRoles={['staff', 'admin']}><StaffDashboard /></ProtectedRoute>} />
               <Route path="/track/:id" element={<OrderTracker />} />
-              <Route path="/profile" element={<CustomerProfile />} />   
+              <Route path="/profile" element={<CustomerProfile />} />
             </Routes>
           </AppLayout>
         </BrowserRouter>

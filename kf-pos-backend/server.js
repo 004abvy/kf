@@ -162,7 +162,24 @@ let pool;
   }
 })();
 
-// 7️⃣ ROUTES
+// ── JWT VERIFICATION MIDDLEWARE ──
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'kf_secret');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid or expired token' });
+  }
+};
+
+// 8️⃣ ROUTES
 // ── AUTHENTICATION ──
 app.post("/api/auth/signup", async (req, res) => {
   try {
@@ -383,8 +400,8 @@ app.post("/api/checkout", async (req, res) => {
   }
 });
 
-// ── STAFF DASHBOARD ──
-app.get("/api/staff/orders", async (req, res) => {
+// ── STAFF DASHBOARD
+app.get("/api/staff/orders", verifyToken, async (req, res) => {
   try {
     const [orders] = await pool.query(`
             SELECT o.order_id, o.order_number, o.total_amount,
@@ -421,7 +438,7 @@ app.get("/api/staff/orders", async (req, res) => {
 });
 
 // ── WHATSAPP STATUS UPDATES ──
-app.post("/api/staff/update-status", async (req, res) => {
+app.post("/api/staff/update-status", verifyToken, async (req, res) => {
   try {
     const { orderId, newStatus, newPaymentStatus, rejectionReason } = req.body;
     if (!orderId || !newStatus)
@@ -545,7 +562,7 @@ app.get("/api/orders/status/:id", async (req, res) => {
 });
 
 // ── ADMIN STATS ──
-app.get("/api/admin/stats", async (req, res) => {
+app.get("/api/admin/stats", verifyToken, async (req, res) => {
   try {
     const [revenue] = await pool.query(
       `SELECT SUM(total_amount) as daily_total FROM Orders WHERE order_status = 'Completed' AND DATE(created_at) = CURDATE()`,
