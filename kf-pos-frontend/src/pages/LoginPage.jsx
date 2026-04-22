@@ -32,7 +32,7 @@ const LoginPage = () => {
     setIsLoading(true);
     setMessage({ text: "", type: "" });
 
-    const API_BASE = "http://127.0.0.1:3000";
+    const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:3000";
 
     try {
       const response = await fetch(`${API_BASE}/api/auth/login`, {

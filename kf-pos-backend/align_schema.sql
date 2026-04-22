@@ -163,9 +163,9 @@ INSERT IGNORE INTO Roles (role_id, role_name) VALUES
 (3, 'staff');
 
 INSERT IGNORE INTO Staff (role_id, full_name, gmail, password, pin_code, is_active) VALUES 
-(1, 'Admin', 'adminkf@gmail.com', 'admin123', '1323', TRUE),
-(3, 'Website System', 'web@kffastfood.com', 'web123', '0000', TRUE),
-(3, 'Counter Register 1', 'counter1@kffastfood.com', 'counter123', '1234', TRUE);
+(1, 'System Admin', 'admin@kf.com', 'admin123', '1111', TRUE),
+(2, 'Store Manager', 'manager@kf.com', 'manager123', '2222', TRUE),
+(3, 'Floor Staff', 'staff@kf.com', 'staff123', '3333', TRUE);
 
 INSERT IGNORE INTO DiningTables (table_number, seating_capacity) VALUES 
 ('T1', 2), ('T2', 4), ('T3', 4), ('T4', 6), ('VIP-1', 8);

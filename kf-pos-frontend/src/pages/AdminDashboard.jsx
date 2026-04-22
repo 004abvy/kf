@@ -18,6 +18,10 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [staffList, setStaffList] = useState([]);
+  const [updatingStaff, setUpdatingStaff] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Colors for the Pie Chart
   const COLORS = ['#000000', '#FBBF24']; // Black and Yellow
@@ -46,8 +50,52 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchStaff = async () => {
+    try {
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/admin/staff`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setStaffList(data);
+      }
+    } catch (err) {
+      console.error("Staff fetch error:", err);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (!newPassword) return alert("Please enter a new password");
+    setIsUpdating(true);
+    try {
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/admin/staff/update-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ staffId: updatingStaff.staff_id, newPassword })
+      });
+      if (res.ok) {
+        alert("Password updated successfully!");
+        setUpdatingStaff(null);
+        setNewPassword('');
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to update password");
+      }
+    } catch (err) {
+      alert("Error updating password");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
+    fetchStaff();
     // Refresh every 30 seconds for live money tracking
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
@@ -194,6 +242,63 @@ const AdminDashboard = () => {
         </div>
 
       </div>
+
+      {/* ── STAFF MANAGEMENT SECTION ── */}
+      <div className="mt-20">
+        <h3 className="text-2xl font-black uppercase mb-8 underline decoration-4 decoration-yellow-400 underline-offset-8">Staff Security & Access</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {staffList.map((staff) => (
+            <div key={staff.staff_id} className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col justify-between">
+              <div>
+                <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{staff.role_name}</p>
+                <h4 className="text-xl font-bold uppercase tracking-tight">{staff.full_name}</h4>
+                <p className="text-xs text-gray-500 mt-1">{staff.gmail}</p>
+              </div>
+              <button 
+                onClick={() => setUpdatingStaff(staff)}
+                className="mt-6 w-full py-3 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-yellow-400 hover:text-black transition-all"
+              >
+                Reset Password
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── PASSWORD RESET MODAL ── */}
+      {updatingStaff && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-10 rounded-[3rem] shadow-2xl max-w-md w-full border-4 border-black">
+            <h3 className="text-2xl font-black uppercase mb-2">Security Override</h3>
+            <p className="text-xs font-bold text-gray-500 uppercase mb-8">Update credentials for <span className="text-black">{updatingStaff.full_name}</span></p>
+            
+            <div className="space-y-4">
+              <input 
+                type="text" 
+                placeholder="Enter New Password" 
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-4 border-2 border-black rounded-xl font-bold outline-none focus:bg-gray-50"
+              />
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setUpdatingStaff(null)}
+                  className="flex-1 py-4 text-[10px] font-black uppercase border-2 border-black rounded-xl hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleUpdatePassword}
+                  disabled={isUpdating}
+                  className="flex-1 py-4 text-[10px] font-black uppercase bg-black text-white rounded-xl hover:bg-yellow-400 hover:text-black transition-all disabled:opacity-50"
+                >
+                  {isUpdating ? 'Saving...' : 'Confirm Update'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

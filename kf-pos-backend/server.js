@@ -201,6 +201,7 @@ app.post("/api/auth/signup", async (req, res) => {
     );
     res.status(201).json({ success: true, message: "Signup successful" });
   } catch (error) {
+    console.error("Signup error:", error);
     res.status(500).json({ message: "Signup failed", error: error.message });
   }
 });
@@ -208,6 +209,7 @@ app.post("/api/auth/signup", async (req, res) => {
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`Login attempt for: ${email}`);
     const [staff] = await pool.query(
       `
             SELECT s.*, r.role_name FROM Staff s 
@@ -224,16 +226,20 @@ app.post("/api/auth/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { id: staff[0].staff_id, role: staff[0].role_name },
+      { id: staff[0].staff_id, role: staff[0].role_name.toLowerCase() },
       process.env.JWT_SECRET || "kf_secret",
       { expiresIn: "24h" },
     );
     res.json({
       token,
-      user: { name: staff[0].full_name, role: staff[0].role_name },
+      user: { 
+        name: staff[0].full_name, 
+        role: staff[0].role_name.toLowerCase() // Ensure role is lowercase for frontend matching
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
@@ -618,6 +624,40 @@ app.get("/api/admin/stats", verifyToken, async (req, res) => {
   } catch (error) {
     console.error("Admin Stats Error:", error);
     res.status(500).json({ message: "Error fetching analytics" });
+  }
+});
+
+// ── STAFF MANAGEMENT (ADMIN ONLY) ──
+app.get("/api/admin/staff", verifyToken, async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ message: "Access denied" });
+  try {
+    const [staff] = await pool.query(`
+      SELECT s.staff_id, s.full_name, s.gmail, r.role_name, s.is_active 
+      FROM Staff s 
+      JOIN Roles r ON s.role_id = r.role_id
+    `);
+    res.json(staff);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching staff" });
+  }
+});
+
+app.post("/api/admin/staff/update-password", verifyToken, async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ message: "Access denied" });
+  try {
+    const { staffId, newPassword } = req.body;
+    if (!staffId || !newPassword)
+      return res.status(400).json({ message: "Staff ID and password required" });
+
+    await pool.query("UPDATE Staff SET password = ? WHERE staff_id = ?", [
+      newPassword,
+      staffId,
+    ]);
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating password" });
   }
 });
 
