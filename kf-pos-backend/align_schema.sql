@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS Staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    password_hash VARCHAR(255),
+    gmail VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
     pin_code VARCHAR(10) UNIQUE,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -162,10 +162,10 @@ INSERT IGNORE INTO Roles (role_id, role_name) VALUES
 (2, 'manager'), 
 (3, 'staff');
 
-INSERT IGNORE INTO Staff (role_id, full_name, email, password_hash, pin_code, is_active) VALUES 
-(1, 'Admin', 'adminkf@gmail.com', '$2a$12$8GGCjBZ1NPH.EJn9frfI/.KMGLqQzH669hUx/ikUW8CcRzOyQHf06', '1323', TRUE),
-(3, 'Website System', 'web@kffastfood.com', 'dummy_hash', '0000', TRUE),
-(3, 'Counter Register 1', 'counter1@kffastfood.com', 'hash_placeholder', '1234', TRUE);
+INSERT IGNORE INTO Staff (role_id, full_name, gmail, password, pin_code, is_active) VALUES 
+(1, 'Admin', 'adminkf@gmail.com', 'admin123', '1323', TRUE),
+(3, 'Website System', 'web@kffastfood.com', 'web123', '0000', TRUE),
+(3, 'Counter Register 1', 'counter1@kffastfood.com', 'counter123', '1234', TRUE);
 
 INSERT IGNORE INTO DiningTables (table_number, seating_capacity) VALUES 
 ('T1', 2), ('T2', 4), ('T3', 4), ('T4', 6), ('VIP-1', 8);

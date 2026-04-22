@@ -188,16 +188,16 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
 
     const [existing] = await pool.query(
-      "SELECT staff_id FROM Staff WHERE email = ?",
+      "SELECT staff_id FROM Staff WHERE gmail = ?",
       [email],
     );
     if (existing.length > 0)
       return res.status(400).json({ message: "Email already exists" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Using plain text password as requested
     await pool.query(
-      `INSERT INTO Staff (full_name, email, password_hash, role_id) VALUES (?, ?, ?, ?)`,
-      [name, email, hashedPassword, 1],
+      `INSERT INTO Staff (full_name, gmail, password, role_id) VALUES (?, ?, ?, ?)`,
+      [name, email, password, 1], // Defaulting to Admin for signup (change to 3 for Staff if needed)
     );
     res.status(201).json({ success: true, message: "Signup successful" });
   } catch (error) {
@@ -211,13 +211,15 @@ app.post("/api/auth/login", async (req, res) => {
     const [staff] = await pool.query(
       `
             SELECT s.*, r.role_name FROM Staff s 
-            JOIN Roles r ON s.role_id = r.role_id WHERE s.email = ?`,
+            JOIN Roles r ON s.role_id = r.role_id WHERE s.gmail = ?`,
       [email],
     );
 
     if (staff.length === 0)
       return res.status(401).json({ message: "Invalid credentials" });
-    const isMatch = await bcrypt.compare(password, staff[0].password_hash);
+    
+    // Plain text comparison
+    const isMatch = (password === staff[0].password);
     if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
@@ -402,6 +404,9 @@ app.post("/api/checkout", async (req, res) => {
 
 // ── STAFF DASHBOARD
 app.get("/api/staff/orders", verifyToken, async (req, res) => {
+  if (req.user.role !== 'staff' && req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Access denied" });
+  }
   try {
     const [orders] = await pool.query(`
             SELECT o.order_id, o.order_number, o.total_amount,
@@ -439,6 +444,9 @@ app.get("/api/staff/orders", verifyToken, async (req, res) => {
 
 // ── WHATSAPP STATUS UPDATES ──
 app.post("/api/staff/update-status", verifyToken, async (req, res) => {
+  if (req.user.role !== 'staff' && req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Access denied" });
+  }
   try {
     const { orderId, newStatus, newPaymentStatus, rejectionReason } = req.body;
     if (!orderId || !newStatus)
@@ -563,6 +571,9 @@ app.get("/api/orders/status/:id", async (req, res) => {
 
 // ── ADMIN STATS ──
 app.get("/api/admin/stats", verifyToken, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Access denied" });
+  }
   try {
     const [revenue] = await pool.query(
       `SELECT SUM(total_amount) as daily_total FROM Orders WHERE order_status = 'Completed' AND DATE(created_at) = CURDATE()`,

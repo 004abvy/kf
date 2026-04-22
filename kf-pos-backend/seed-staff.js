@@ -14,7 +14,7 @@ require('dotenv').config();
   try {
     // Insert default staff
     await conn.query(
-      `INSERT INTO Staff (role_id, full_name, email, password_hash, pin_code, is_active) 
+      `INSERT INTO Staff (role_id, full_name, gmail, password, pin_code, is_active) 
        VALUES (3, 'Default Staff', 'staff@kf.com', 'demo123', '1111', TRUE)`
     );
 
