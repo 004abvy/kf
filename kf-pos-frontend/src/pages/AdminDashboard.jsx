@@ -19,9 +19,13 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [staffList, setStaffList] = useState([]);
+  const [customerList, setCustomerList] = useState([]);
   const [updatingStaff, setUpdatingStaff] = useState(null);
+  const [viewingCustomerOrders, setViewingCustomerOrders] = useState(null);
+  const [customerOrders, setCustomerOrders] = useState([]);
   const [newPassword, setNewPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
   // Colors for the Pie Chart
   const COLORS = ['#000000', '#FBBF24']; // Black and Yellow
@@ -65,6 +69,34 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchCustomers = async () => {
+    try {
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/admin/customers`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCustomerList(data);
+      }
+    } catch (err) {
+      console.error("Customer fetch error:", err);
+    }
+  };
+
+  const fetchCustomerOrders = async (customerId) => {
+    setIsLoadingOrders(true);
+    try {
+      const res = await fetch(`${API_URL}/api/customer/history/${customerId}`);
+      const data = await res.json();
+      setCustomerOrders(data);
+    } catch (err) {
+      console.error("Fetch customer orders error:", err);
+    } finally {
+      setIsLoadingOrders(false);
+    }
+  };
+
   const handleUpdatePassword = async () => {
     if (!newPassword) return alert("Please enter a new password");
     setIsUpdating(true);
@@ -96,6 +128,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchStats();
     fetchStaff();
+    fetchCustomers();
     // Refresh every 30 seconds for live money tracking
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
@@ -247,7 +280,7 @@ const AdminDashboard = () => {
       <div className="mt-20">
         <h3 className="text-2xl font-black uppercase mb-8 underline decoration-4 decoration-yellow-400 underline-offset-8">Staff Security & Access</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {staffList.map((staff) => (
+          {staffList.filter(s => s.role_name !== 'customer').map((staff) => (
             <div key={staff.staff_id} className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col justify-between">
               <div>
                 <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{staff.role_name}</p>
@@ -265,36 +298,101 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* ── PASSWORD RESET MODAL ── */}
-      {updatingStaff && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-10 rounded-[3rem] shadow-2xl max-w-md w-full border-4 border-black">
-            <h3 className="text-2xl font-black uppercase mb-2">Security Override</h3>
-            <p className="text-xs font-bold text-gray-500 uppercase mb-8">Update credentials for <span className="text-black">{updatingStaff.full_name}</span></p>
-            
-            <div className="space-y-4">
-              <input 
-                type="text" 
-                placeholder="Enter New Password" 
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-4 border-2 border-black rounded-xl font-bold outline-none focus:bg-gray-50"
-              />
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => setUpdatingStaff(null)}
-                  className="flex-1 py-4 text-[10px] font-black uppercase border-2 border-black rounded-xl hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleUpdatePassword}
-                  disabled={isUpdating}
-                  className="flex-1 py-4 text-[10px] font-black uppercase bg-black text-white rounded-xl hover:bg-yellow-400 hover:text-black transition-all disabled:opacity-50"
-                >
-                  {isUpdating ? 'Saving...' : 'Confirm Update'}
-                </button>
+      {/* ── CUSTOMER DIRECTORY SECTION ── */}
+      <div className="mt-20">
+        <h3 className="text-2xl font-black uppercase mb-8 underline decoration-4 decoration-yellow-400 underline-offset-8">Customer Directory</h3>
+        <div className="bg-gray-50 rounded-[2rem] border border-gray-100 overflow-hidden">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-black text-white text-[10px] font-black uppercase tracking-widest">
+                <th className="px-8 py-4">Name</th>
+                <th className="px-8 py-4">Email</th>
+                <th className="px-8 py-4">Total Orders</th>
+                <th className="px-8 py-4">Last Order</th>
+                <th className="px-8 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {customerList.map((customer) => (
+                <tr key={customer.id} className="hover:bg-white transition-colors group">
+                  <td className="px-8 py-6 font-bold uppercase text-sm tracking-tight">{customer.full_name}</td>
+                  <td className="px-8 py-6 text-xs text-gray-500">{customer.gmail}</td>
+                  <td className="px-8 py-6">
+                    <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-[10px] font-black">{customer.order_count}</span>
+                  </td>
+                  <td className="px-8 py-6 text-[10px] font-bold text-gray-400 uppercase">
+                    {customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString() : 'Never'}
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <button 
+                      onClick={() => {
+                        setViewingCustomerOrders(customer);
+                        fetchCustomerOrders(customer.id);
+                      }}
+                      className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-4 py-2 rounded-lg hover:bg-yellow-400 hover:text-black transition-all"
+                    >
+                      View Orders
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {customerList.length === 0 && (
+            <div className="p-20 text-center text-gray-400 font-bold uppercase tracking-widest">No customers found</div>
+          )}
+        </div>
+      </div>
+
+      {/* ── CUSTOMER ORDERS MODAL ── */}
+      {viewingCustomerOrders && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white w-full max-w-4xl max-h-[85vh] rounded-[3.5rem] shadow-2xl border-4 border-black overflow-hidden flex flex-col">
+            <div className="p-10 border-b border-gray-100 flex justify-between items-start">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Order History for</p>
+                <h3 className="text-4xl font-black uppercase tracking-tighter">{viewingCustomerOrders.full_name}</h3>
               </div>
+              <button 
+                onClick={() => setViewingCustomerOrders(null)}
+                className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center font-black hover:bg-black hover:text-white transition-all"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-10 space-y-6">
+              {isLoadingOrders ? (
+                <div className="py-20 text-center font-black uppercase text-gray-400 tracking-widest animate-pulse">Fetching History...</div>
+              ) : customerOrders.length > 0 ? (
+                customerOrders.map((order) => (
+                  <div key={order.order_id} className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col md:flex-row justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-xl font-mono font-black">#{order.order_number.slice(-6)}</span>
+                        <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${order.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          {order.status}
+                        </span>
+                      </div>
+                      <p className="text-xs font-bold text-gray-600 mb-4">
+                        {order.items.map(i => `${i.quantity}x ${i.item_name}`).join(', ')}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        {new Date(order.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-right self-center">
+                      <p className="text-2xl font-black">{order.total_amount.toLocaleString()} PKR</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-20 text-center font-black uppercase text-gray-400 tracking-widest">No order history found.</div>
+              )}
+            </div>
+            
+            <div className="p-10 bg-gray-50 border-t border-gray-100">
+              <button onClick={() => setViewingCustomerOrders(null)} className="w-full py-4 bg-black text-white font-black uppercase tracking-widest rounded-2xl">Close Directory</button>
             </div>
           </motion.div>
         </div>

@@ -669,6 +669,26 @@ app.post("/api/admin/staff/update-password", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/admin/customers", verifyToken, async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ message: "Access denied" });
+  try {
+    const [customers] = await pool.query(`
+      SELECT s.staff_id as id, s.full_name, s.gmail, 
+             (SELECT COUNT(*) FROM Orders o WHERE o.customer_id = s.staff_id) as order_count,
+             (SELECT MAX(created_at) FROM Orders o WHERE o.customer_id = s.staff_id) as last_order_date
+      FROM Staff s 
+      JOIN Roles r ON s.role_id = r.role_id
+      WHERE r.role_name = 'customer'
+      ORDER BY last_order_date DESC
+    `);
+    res.json(customers);
+  } catch (error) {
+    console.error("Fetch customers error:", error);
+    res.status(500).json({ message: "Error fetching customers" });
+  }
+});
+
 // ── CUSTOMER PROFILE ──
 app.get("/api/customer/history/:identifier", async (req, res) => {
   try {
