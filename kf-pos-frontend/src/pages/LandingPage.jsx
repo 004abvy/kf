@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import Landingimg from '../assets/landingpage.jpg';
+import Landingimg from '../assets/landingpage.webp';
+import LandingPlaceholder from '../assets/landingpage-placeholder.webp';
 import MostWanted from './MostWanted';
 import CategoriesPage from './Categories';
 import Feedback from './feedback';
@@ -15,7 +16,18 @@ export default function LandingPage() {
 
       {/* 1. HERO SECTION */}
       <div className="relative h-screen md:h-[90vh] flex items-center overflow-hidden">
-        {/* Animated Background Image */}
+        {/* Blurred placeholder (loads instantly ~0.1KB) */}
+        <div
+           className="absolute inset-0 z-0"
+           style={{
+             backgroundImage: `url(${LandingPlaceholder})`,
+             backgroundSize: 'cover',
+             backgroundPosition: 'center',
+             filter: 'blur(20px)',
+             transform: 'scale(1.1)',
+           }}
+        />
+        {/* Full quality hero (282KB WebP, loads over placeholder) */}
         <motion.div
            initial={{ scale: 1.15, opacity: 0 }}
            animate={{ scale: 1, opacity: 1 }}

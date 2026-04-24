@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLenis } from "../components/SmoothScroll";
 import { useCart } from "../context/CartContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import OptimizedImage from "../components/OptimizedImage";
 
 const SIDEBAR_WIDTH = 340;
 const CART_WIDTH = 360;
@@ -135,8 +136,7 @@ const Menu = () => {
                 products: uniqueModifiers.map(mod => ({
                   item_id: `mod-${mod.modifier_id}`,
                   item_name: mod.name,
-                  // UPDATED: Using LoremFlickr for real photos in the Extras category
-                  image_url: `https://loremflickr.com/800/800/food,ingredient,${encodeURIComponent(mod.name)}/all`,
+                  image_url: `https://loremflickr.com/400/400/food,ingredient,${encodeURIComponent(mod.name)}/all`,
                   variations: [{
                     variation_id: `mod-var-${mod.modifier_id}`,
                     size_name: "Standard",
@@ -292,10 +292,11 @@ const Menu = () => {
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: idx * 0.02 }}
                 >
                   <div className="aspect-square bg-zinc-950 rounded-md sm:rounded-lg overflow-hidden relative mb-1 sm:mb-2 shadow-md">
-                    {/* UPDATED: Using LoremFlickr for real photos in the main menu */}
-                    <motion.img 
-                      src={item.image_url || `https://loremflickr.com/800/800/food,dish,${encodeURIComponent(item.item_name)}/all`} 
-                      alt={item.item_name} 
+                    <OptimizedImage 
+                      src={item.image_url || `https://loremflickr.com/400/400/food,dish,${encodeURIComponent(item.item_name)}/all`} 
+                      alt={item.item_name}
+                      fallbackText={item.item_name}
+                      containerClassName="w-full h-full"
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -481,10 +482,11 @@ const Menu = () => {
                   <motion.div key={item.cart_id || item.variation_id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col gap-4 p-4 rounded-3xl bg-zinc-900/30 border border-zinc-900 group">
                     <div className="flex gap-4">
                       <div className="w-16 h-16 rounded-2xl bg-zinc-950 overflow-hidden flex-shrink-0 ring-1 ring-zinc-800">
-                        {/* UPDATED: Using LoremFlickr for real photos in the cart */}
                         <img 
                           src={item.image_url || `https://loremflickr.com/100/100/food,dish,${encodeURIComponent(item.item_name)}/all`} 
                           alt={item.item_name} 
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover" 
                         />
                       </div>

@@ -116,6 +116,8 @@ function CategoryCard({ title, img, onEnter, onLeave, onClick }) {
         <img
           src={img}
           alt={title}
+          loading="lazy"
+          decoding="async"
           draggable={false}
           style={{
             width: "100%",

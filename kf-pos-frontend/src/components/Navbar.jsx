@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import DesktopLogo from '../assets/desktop-logo.PNG'; 
-import MobileLogo from '../assets/mobile-logo.PNG';   
+import DesktopLogo from '../assets/desktop-logo.webp'; 
+import MobileLogo from '../assets/mobile-logo.webp';   
 
 export default function Navbar() {
   const { isLoggedIn, user, logout } = useAuth();
@@ -34,8 +34,8 @@ export default function Navbar() {
             className="flex-shrink-0 flex items-center gap-2 cursor-pointer"
           >
             <Link to="/" className="flex items-center gap-2">
-              <img src={MobileLogo} alt="Mobile Logo" className="h-8 w-auto block sm:hidden" />
-              <img src={DesktopLogo} alt="Desktop Logo" className="h-16 md:h-20 w-auto hidden sm:block" />
+              <img src={MobileLogo} alt="Mobile Logo" loading="eager" className="h-8 w-auto block sm:hidden" />
+              <img src={DesktopLogo} alt="Desktop Logo" loading="eager" className="h-16 md:h-20 w-auto hidden sm:block" />
             </Link>
           </motion.div>
 

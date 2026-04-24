@@ -224,7 +224,7 @@ const Cart = () => {
                 {cartItems.map((item) => (
                   <motion.div layout key={item.cart_id || item.variation_id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-5 sm:py-8 border-b border-gray-100 gap-4">
                     <div className="flex gap-4 sm:gap-6 items-center flex-1 w-full">
-                      <img src={item.image_url} alt="" className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl object-cover bg-gray-50" />
+                      <img src={item.image_url} alt="" loading="lazy" decoding="async" className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl object-cover bg-gray-50" />
                       <div className="flex-1 min-w-0">
                         <h3 className="text-base sm:text-xl font-bold uppercase leading-tight mb-1 sm:mb-2 break-words">{item.item_name}</h3>
                         <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-3">

@@ -73,6 +73,8 @@ export default function MostWanted() {
         <img
           src={product.image_url || FALLBACK_ITEM_IMG}
           alt={product.item_name}
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             if (e.currentTarget.src !== FALLBACK_ITEM_IMG) {
               e.currentTarget.src = FALLBACK_ITEM_IMG;
@@ -139,7 +141,7 @@ export default function MostWanted() {
             transition={{ duration: 0.6 }}
             className="relative w-full h-[250px] md:h-[400px] rounded-3xl overflow-hidden shadow-2xl mb-8"
           >
-            <img src={HERO_IMG} alt="Popular dishes" className="w-full h-full object-cover" />
+            <img src={HERO_IMG} alt="Popular dishes" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent p-6 md:p-12 flex flex-col justify-center">
               <h3 className="text-2xl md:text-4xl font-extrabold uppercase tracking-wide leading-tight mb-4 text-[#ff007f]">
                 Fan Favorites
@@ -184,7 +186,7 @@ export default function MostWanted() {
           
           {/* Sticky Left Hero */}
           <div className="col-span-5 sticky top-[200px] h-[75vh] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl group">
-            <img src={HERO_IMG} alt="Popular dishes" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={HERO_IMG} alt="Popular dishes" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
               <p className="text-3xl xl:text-4xl font-extrabold uppercase tracking-wide leading-tight mb-6 max-w-[90%]">
                 See Our Most Popular Products
