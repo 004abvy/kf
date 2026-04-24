@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 const SIDEBAR_WIDTH = 340;
 const CART_WIDTH = 360;
-const TOP_NAV_HEIGHT = 180;
+const TOP_NAV_HEIGHT = 100; // Updated to match actual Navbar height
 
 const Menu = () => {
   const [menuData, setMenuData] = useState([]);
@@ -175,7 +175,7 @@ const Menu = () => {
           }
         });
       },
-      { root: null, rootMargin: `-${TOP_NAV_HEIGHT + 100}px 0px -60% 0px`, threshold: 0 }
+      { root: null, rootMargin: `-${TOP_NAV_HEIGHT + 20}px 0px -70% 0px`, threshold: 0.1 }
     );
 
     Object.values(sectionRefs.current).forEach((section) => {
@@ -187,13 +187,19 @@ const Menu = () => {
   useEffect(() => {
     const updateHighlight = () => {
       if (!activeCategoryId) return;
+      
+      // Only run scrollIntoView for the sidebar if we're on a large screen where it's visible
+      const isLargeScreen = window.innerWidth >= 1024;
       const activeElement = sidebarRefs.current[activeCategoryId];
+      
       if (activeElement) {
         setHighlightStyle({ top: activeElement.offsetTop, height: activeElement.offsetHeight, opacity: 1 });
-        activeElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (isLargeScreen) {
+          activeElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
       }
     };
-    requestAnimationFrame(updateHighlight);
+    updateHighlight();
   }, [activeCategoryId, menuData]);
 
   const scrollToCategory = useCallback((categoryId) => {
@@ -288,15 +294,15 @@ const Menu = () => {
                 <motion.div
                   key={item.item_id}
                   onClick={() => openItemModal(item)}
-                  className="group relative flex flex-col h-full bg-linear-to-br from-zinc-900/10 to-transparent hover:to-[#e0457b]/5 p-1 sm:p-2 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl transition-all duration-700 ring-1 ring-zinc-900 hover:ring-[#e0457b]/20 cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: idx * 0.02 }}
+                  className="group relative flex flex-col h-full bg-linear-to-br from-zinc-900/10 to-transparent hover:to-[#e0457b]/5 p-1 sm:p-2 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl transition-[background,ring,transform] duration-500 ring-1 ring-zinc-900 hover:ring-[#e0457b]/20 cursor-pointer transform-gpu"
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20px" }} transition={{ duration: 0.5, delay: idx * 0.01 }}
                 >
                   <div className="aspect-square bg-zinc-950 rounded-md sm:rounded-lg overflow-hidden relative mb-1 sm:mb-2 shadow-md">
                     {/* UPDATED: Using LoremFlickr for real photos in the main menu */}
                     <motion.img 
                       src={item.image_url || `https://loremflickr.com/800/800/food,dish,${encodeURIComponent(item.item_name)}/all`} 
                       alt={item.item_name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out will-change-transform" 
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   </div>
@@ -425,7 +431,7 @@ const Menu = () => {
 
 
 {/* ── MOBILE CATEGORY BAR ── */}
-<div className="lg:hidden sticky top-[80px] z-30 bg-black/90 backdrop-blur-xl border-b border-zinc-800 w-full">
+<div className="lg:hidden sticky top-[92px] z-30 bg-black/90 backdrop-blur-xl border-b border-zinc-800 w-full">
   <div className="overflow-x-auto no-scrollbar w-full">
     <div className="flex gap-2 px-5 py-4 w-max">
       {menuData.map((cat) => {
