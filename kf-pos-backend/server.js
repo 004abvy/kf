@@ -349,7 +349,14 @@ app.post("/api/checkout", async (req, res) => {
 
   try {
     await connection.beginTransaction();
-    const orderNumber = `ORD-${Date.now()}`;
+    
+    // Generate a short 4-digit alphanumeric order number (e.g., KF-A1B2)
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let shortCode = "";
+    for (let i = 0; i < 4; i++) {
+      shortCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const orderNumber = `KF-${shortCode}`;
     const [staff] = await connection.query(
       "SELECT staff_id FROM Staff LIMIT 1",
     );
