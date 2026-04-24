@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -14,12 +14,28 @@ import OrderSuccess from './pages/OrderSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import StaffDashboard from './pages/StaffDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useLenis } from './components/SmoothScroll';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
 import OrderTracker from './pages/OrderTracker';
 import CustomerProfile from './pages/CustomerProfile';
+
+// ── NEW: SCROLL TO TOP COMPONENT ──
+const ScrollToTop = () => {
+  const location = useLocation();
+  const lenis = useLenis();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
+  }, [location.pathname, lenis]);
+
+  return null;
+};
 
 // ── NEW: CONDITIONAL LAYOUT COMPONENT ──
 const AppLayout = ({ children }) => {
@@ -29,6 +45,7 @@ const AppLayout = ({ children }) => {
 const isStaffPage = ['/staff', '/kitchen', '/admin'].includes(location.pathname);
   return (
     <SmoothScroll>
+      <ScrollToTop />
       {!isStaffPage && <Navbar />}
       
       <div className={!isStaffPage ? "min-h-[calc(100vh-64px)]" : "min-h-screen"}>
