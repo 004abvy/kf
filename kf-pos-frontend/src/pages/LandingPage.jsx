@@ -7,6 +7,7 @@ import CategoriesPage from './Categories';
 import Feedback from './feedback';
 import FAQ from './FAQ';
 import { StaggerText, FadeUpText, FadeInBlock } from '../components/AnimatedText';
+import WhatsAppButton from '../components/WhatsAppButton';
 
 export default function LandingPage() {
   return (
@@ -117,6 +118,7 @@ export default function LandingPage() {
       <CategoriesPage />
       <Feedback />
       <FAQ />
+      <WhatsAppButton phoneNumber="923188164861" />
     </div>
   );
 }
