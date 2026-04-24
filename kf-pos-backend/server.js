@@ -700,6 +700,25 @@ app.get("/api/admin/customers", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/admin/recent-orders", verifyToken, async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ message: "Access denied" });
+  try {
+    const [orders] = await pool.query(`
+      SELECT o.order_id, o.order_number, o.total_amount, o.order_status as status, o.customer_phone, o.delivery_address, o.created_at,
+             s.full_name as customer_name
+      FROM Orders o
+      LEFT JOIN Staff s ON o.customer_id = s.staff_id
+      ORDER BY o.created_at DESC
+      LIMIT 20
+    `);
+    res.json(orders);
+  } catch (error) {
+    console.error("Fetch recent orders error:", error);
+    res.status(500).json({ message: "Error fetching orders" });
+  }
+});
+
 // ── CUSTOMER PROFILE ──
 app.get("/api/customer/history/:identifier", async (req, res) => {
   try {

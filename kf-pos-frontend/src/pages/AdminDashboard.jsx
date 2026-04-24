@@ -20,6 +20,7 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
   const [staffList, setStaffList] = useState([]);
   const [customerList, setCustomerList] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [updatingStaff, setUpdatingStaff] = useState(null);
   const [viewingCustomerOrders, setViewingCustomerOrders] = useState(null);
   const [customerOrders, setCustomerOrders] = useState([]);
@@ -125,12 +126,31 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchRecentOrders = async () => {
+    try {
+      const token = localStorage.getItem('kf_token');
+      const res = await fetch(`${API_URL}/api/admin/recent-orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRecentOrders(data);
+      }
+    } catch (err) {
+      console.error("Recent orders fetch error:", err);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
     fetchStaff();
     fetchCustomers();
+    fetchRecentOrders();
     // Refresh every 30 seconds for live money tracking
-    const interval = setInterval(fetchStats, 30000);
+    const interval = setInterval(() => {
+      fetchStats();
+      fetchRecentOrders();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -190,29 +210,47 @@ const AdminDashboard = () => {
         </motion.div>
       </div>
 
-      {/* ── LINE CHART: 7-DAY REVENUE TREND ── */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gray-50 p-10 rounded-[3rem] border border-gray-100 mb-16">
-        <div className="mb-10 flex justify-between items-center">
-          <h3 className="text-2xl font-black uppercase">7-Day Revenue Trend</h3>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white border border-gray-200 px-4 py-2 rounded-full shadow-sm">Last 7 Days</span>
+      {/* ── RECENT GLOBAL ORDERS ── */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[3rem] border-4 border-black p-8 lg:p-12 mb-16 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex justify-between items-center mb-10">
+          <h3 className="text-3xl font-black uppercase tracking-tighter">Recent Global Orders</h3>
+          <span className="text-[10px] font-black uppercase bg-black text-white px-4 py-2 rounded-full">All Channels</span>
         </div>
-        
-        <div className="h-[400px] w-full">
-          {stats.revenueTrend && stats.revenueTrend.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={stats.revenueTrend}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af', fontWeight: 'bold' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af', fontWeight: 'bold' }} tickFormatter={(value) => `Rs ${value}`} dx={-10} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', fontWeight: 'bold' }}
-                  itemStyle={{ color: 'black' }}
-                />
-                <Line type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={4} dot={{ r: 6, fill: '#FBBF24', strokeWidth: 0 }} activeDot={{ r: 8 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-full flex items-center justify-center text-gray-400 font-bold uppercase tracking-widest text-sm">Not enough data to draw chart</div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b-4 border-black text-[10px] font-black uppercase tracking-widest text-gray-400">
+                <th className="px-4 py-6">Order #</th>
+                <th className="px-4 py-6">Customer</th>
+                <th className="px-4 py-6">Address</th>
+                <th className="px-4 py-6">Total</th>
+                <th className="px-4 py-6 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y-2 divide-gray-100">
+              {recentOrders.map((order) => (
+                <tr key={order.order_id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-6 font-mono font-black">#{order.order_number.slice(-6)}</td>
+                  <td className="px-4 py-6">
+                    <p className="font-bold uppercase text-xs">{order.customer_name || 'Guest'}</p>
+                    <p className="text-[10px] font-bold text-gray-400">{order.customer_phone}</p>
+                  </td>
+                  <td className="px-4 py-6 text-xs font-bold text-gray-500 max-w-[200px] truncate">{order.delivery_address || 'Takeaway'}</td>
+                  <td className="px-4 py-6 font-black">{order.total_amount.toLocaleString()} PKR</td>
+                  <td className="px-4 py-6 text-right">
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                      order.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                      order.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {order.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {recentOrders.length === 0 && (
+            <div className="p-20 text-center font-black uppercase text-gray-300 tracking-widest">No orders found</div>
           )}
         </div>
       </motion.div>
