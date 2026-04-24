@@ -196,7 +196,14 @@ app.post("/api/auth/signup", async (req, res) => {
 
     // Get customer role ID
     const [roles] = await pool.query("SELECT role_id FROM Roles WHERE role_name = 'customer'");
-    const roleId = roles[0]?.role_id || 2; // Default to Staff if Customer not found for some reason
+    let roleId = roles[0]?.role_id;
+
+    if (!roleId) {
+      // Fallback: Try to find by case-insensitive name or just use a sensible default
+      const [allRoles] = await pool.query("SELECT * FROM Roles");
+      const customerRole = allRoles.find(r => r.role_name.toLowerCase() === 'customer');
+      roleId = customerRole ? customerRole.role_id : 4; // Use 4 as hard fallback if absolutely necessary
+    }
 
     // Using plain text password as requested
     const [result] = await pool.query(
@@ -683,7 +690,7 @@ app.get("/api/admin/customers", verifyToken, async (req, res) => {
              (SELECT MAX(created_at) FROM Orders o WHERE o.customer_id = s.staff_id) as last_order_date
       FROM Staff s 
       JOIN Roles r ON s.role_id = r.role_id
-      WHERE r.role_name = 'customer'
+      WHERE LOWER(r.role_name) = 'customer'
       ORDER BY last_order_date DESC
     `);
     res.json(customers);

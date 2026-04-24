@@ -280,7 +280,7 @@ const AdminDashboard = () => {
       <div className="mt-20">
         <h3 className="text-2xl font-black uppercase mb-8 underline decoration-4 decoration-yellow-400 underline-offset-8">Staff Security & Access</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {staffList.filter(s => s.role_name !== 'customer').map((staff) => (
+          {staffList.filter(s => s.role_name.toLowerCase() !== 'customer').map((staff) => (
             <div key={staff.staff_id} className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col justify-between">
               <div>
                 <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{staff.role_name}</p>
