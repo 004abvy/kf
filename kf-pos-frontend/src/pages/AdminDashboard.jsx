@@ -382,6 +382,48 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* ── PASSWORD RESET MODAL ── */}
+      {updatingStaff && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl border-4 border-black p-10">
+            <h3 className="text-3xl font-black uppercase mb-2 tracking-tighter">Reset Password</h3>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">For {updatingStaff.full_name}</p>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest ml-2 mb-2 block">New Password</label>
+                <input 
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-gray-50 border-2 border-black rounded-2xl p-4 font-bold outline-none focus:bg-yellow-50 transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
+              
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => {
+                    setUpdatingStaff(null);
+                    setNewPassword('');
+                  }}
+                  className="flex-1 py-4 border-2 border-black rounded-2xl font-black uppercase tracking-widest hover:bg-gray-100 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleUpdatePassword}
+                  disabled={isUpdating}
+                  className="flex-1 py-4 bg-black text-white rounded-2xl font-black uppercase tracking-widest hover:bg-yellow-400 hover:text-black transition-all disabled:opacity-50"
+                >
+                  {isUpdating ? 'Updating...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* ── CUSTOMER ORDERS MODAL ── */}
       {viewingCustomerOrders && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
