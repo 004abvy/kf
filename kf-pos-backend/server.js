@@ -100,13 +100,39 @@ if (!effectiveDbName && process.env.DATABASE_URL) {
   }
 }
 
+const poolOptions = {
+    waitForConnections: true,
+    connectionLimit: 100, // Increased from 10 to 100 for significantly higher capacity
+    queueLimit: 0,
+    connectTimeout: 10000,
+    acquireTimeout: 10000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
+};
+
 if (process.env.DATABASE_URL) {
-  // Force runtime queries to use the same DB name as init-db.
-  const parsed = new URL(process.env.DATABASE_URL);
-  if (effectiveDbName) {
-    parsed.pathname = `/${effectiveDbName}`;
+  try {
+    const parsed = new URL(process.env.DATABASE_URL);
+    dbConfig = {
+      host: parsed.hostname,
+      user: decodeURIComponent(parsed.username),
+      password: decodeURIComponent(parsed.password),
+      database: effectiveDbName || parsed.pathname.replace(/^\//, ""),
+      port: Number(parsed.port) || 3306,
+      ssl: process.env.DATABASE_URL.includes("railway.app") ? { rejectUnauthorized: false } : null,
+      ...poolOptions
+    };
+  } catch (err) {
+    console.error("❌ Failed to parse DATABASE_URL, falling back to manual config:", err.message);
+    dbConfig = {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: process.env.DB_PORT || 3306,
+      ...poolOptions
+    };
   }
-  dbConfig = parsed.toString();
 } else {
   dbConfig = {
     host: process.env.DB_HOST,
@@ -114,11 +140,10 @@ if (process.env.DATABASE_URL) {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    ...poolOptions
   };
 }
+
 
 // Initialize database schema before creating pool
 let pool;
