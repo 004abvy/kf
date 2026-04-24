@@ -61,13 +61,39 @@ export default function Footer() {
           <FadeUpText delay={0.4} className="space-y-8 border-t border-gray-900 pt-10 lg:border-none lg:pt-0">
             <div className="space-y-2">
               <h3 className="text-[10px] font-black tracking-[0.3em] uppercase text-gray-500">Operating Hours</h3>
-              <p className="text-xl md:text-2xl font-black text-white italic">10:00 — 02:00</p>
+              <p className="text-xl md:text-2xl font-black text-white italic">11:00 — 03:00</p>
             </div>
 
             <div className="space-y-6">
-              <p className="text-white font-black text-2xl md:text-3xl tracking-tighter hover:text-pink-600 cursor-pointer transition-colors">
-                +374 11 388888
-              </p>
+<div className="flex flex-wrap gap-x-6 gap-y-3">
+  <a
+    href="tel:+923214042492"
+    className="text-white font-black text-lg md:text-2xl tracking-tighter hover:text-pink-600 transition-colors"
+  >
+    +92 321 4042492
+  </a>
+
+  <a
+    href="tel:+923000516727"
+    className="text-white font-black text-lg md:text-2xl tracking-tighter hover:text-pink-600 transition-colors"
+  >
+    +92 300 0516727
+  </a>
+
+  <a
+    href="tel:+923041114201"
+    className="text-white font-black text-lg md:text-2xl tracking-tighter hover:text-pink-600 transition-colors"
+  >
+    +92 304 1114201
+  </a>
+
+  <a
+    href="tel:+923054642284"
+    className="text-white font-black text-lg md:text-2xl tracking-tighter hover:text-pink-600 transition-colors"
+  >
+    +92 305 4642284
+  </a>
+</div>
               
               <div className="flex justify-between items-end">
                 <div className="uppercase">

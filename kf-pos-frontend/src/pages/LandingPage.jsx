@@ -118,7 +118,7 @@ export default function LandingPage() {
       <CategoriesPage />
       <Feedback />
       <FAQ />
-      <WhatsAppButton phoneNumber="923188164861" />
+      <WhatsAppButton phoneNumber="923214042492" />
     </div>
   );
 }
