@@ -376,7 +376,9 @@ const StaffDashboard = () => {
               {/* Header section of card */}
               <div className="flex flex-row justify-between items-start mb-2 lg:mb-4 gap-2">
                 <div className="min-w-0">
-                  <p className={`text-[8px] lg:text-xs font-black uppercase tracking-widest mb-0.5 ${isDarkMode ? 'text-zinc-500' : 'text-gray-400'}`}>Order</p>
+                  <p className={`text-[8px] lg:text-xs font-black uppercase tracking-widest mb-0.5 ${isDarkMode ? 'text-zinc-500' : 'text-gray-400'}`}>
+                    {order.customer_name ? `Customer: ${order.customer_name}` : 'Order'}
+                  </p>
                   <h3 className={`text-[15px] sm:text-lg lg:text-2xl font-mono font-black truncate ${isDarkMode ? 'text-white' : 'text-black'}`}>#{order.order_number.slice(-6)}</h3>
                   <p className={`text-[8px] lg:text-[10px] font-bold uppercase tracking-widest mt-0.5 ${isDarkMode ? 'text-zinc-500' : 'text-gray-400'}`}>
                     {new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}

@@ -431,8 +431,11 @@ app.get("/api/staff/orders", verifyToken, async (req, res) => {
                      ELSE o.order_status
                    END as status,
                    o.created_at, o.customer_phone, o.rejection_reason, o.delivery_address,
-                   LOWER(p.payment_method) as payment_method, p.payment_status, p.transaction_id
-            FROM Orders o LEFT JOIN Payments p ON o.order_id = p.order_id
+                   LOWER(p.payment_method) as payment_method, p.payment_status, p.transaction_id,
+                   s.full_name as customer_name
+            FROM Orders o 
+            LEFT JOIN Payments p ON o.order_id = p.order_id
+            LEFT JOIN Staff s ON o.customer_id = s.staff_id
             WHERE o.order_status != 'Completed' AND o.order_status != 'Cancelled' ORDER BY o.created_at ASC
         `);
 
