@@ -259,7 +259,7 @@ const AdminDashboard = () => {
         </div>
 
         <div className="overflow-hidden border-2 border-gray-100 rounded-3xl">
-          <div className="max-h-[500px] overflow-y-auto no-scrollbar">
+          <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
             <table className="w-full text-left">
               <thead className="sticky top-0 bg-white z-10 shadow-sm">
                 <tr className="border-b-4 border-black text-[10px] font-black uppercase tracking-widest text-gray-400">
