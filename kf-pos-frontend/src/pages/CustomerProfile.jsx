@@ -1,28 +1,38 @@
-import React, { useState } from 'react';
-
-const API_URL = import.meta.env.VITE_API_URL;
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; // Ensure this path is correct!
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const CustomerProfile = () => {
+  const { user } = useAuth();
   const [phone, setPhone] = useState('');
   const [history, setHistory] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
-  // We need your cart context to inject the items back into the cart
   const { addToCart } = useCart(); 
   const navigate = useNavigate();
 
-  const fetchHistory = async () => {
-    if (phone.length < 10) return alert("Enter a valid phone number");
+  // ── AUTO-FETCH HISTORY IF LOGGED IN ──
+  useEffect(() => {
+    if (user?.id) {
+      fetchHistory(user.id);
+    }
+  }, [user]);
+
+  const fetchHistory = async (identifier) => {
+    const searchVal = identifier || phone;
+    if (!searchVal) return alert("Enter a phone number or log in");
     
+    setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/customer/history/${phone}`);
+      const res = await fetch(`${API_URL}/api/customer/history/${searchVal}`);
       const data = await res.json();
       setHistory(data);
       setHasSearched(true);
     } catch (err) {
       console.error("Failed to fetch history");
+    } finally {
+      setIsLoading(false);
     }
   };
 

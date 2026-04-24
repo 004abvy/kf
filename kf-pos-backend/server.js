@@ -183,7 +183,7 @@ const verifyToken = (req, res, next) => {
 // ── AUTHENTICATION ──
 app.post("/api/auth/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ message: "All fields are required" });
 
@@ -194,12 +194,17 @@ app.post("/api/auth/signup", async (req, res) => {
     if (existing.length > 0)
       return res.status(400).json({ message: "Email already exists" });
 
+    // Get customer role ID
+    const [roles] = await pool.query("SELECT role_id FROM Roles WHERE role_name = 'customer'");
+    const roleId = roles[0]?.role_id || 2; // Default to Staff if Customer not found for some reason
+
     // Using plain text password as requested
-    await pool.query(
+    const [result] = await pool.query(
       `INSERT INTO Staff (full_name, gmail, password, role_id) VALUES (?, ?, ?, ?)`,
-      [name, email, password, 1], // Defaulting to Admin for signup (change to 3 for Staff if needed)
+      [name, email, password, roleId],
     );
-    res.status(201).json({ success: true, message: "Signup successful" });
+    
+    res.status(201).json({ success: true, message: "Signup successful", userId: result.insertId });
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ message: "Signup failed", error: error.message });
@@ -233,6 +238,7 @@ app.post("/api/auth/login", async (req, res) => {
     res.json({
       token,
       user: { 
+        id: staff[0].staff_id,
         name: staff[0].full_name, 
         role: staff[0].role_name.toLowerCase() // Ensure role is lowercase for frontend matching
       },
@@ -329,6 +335,7 @@ app.post("/api/checkout", async (req, res) => {
     customerPhone,
     deliveryAddress,
     deliveryFee,
+    userId, // New field for linked account
   } = req.body;
   const connection = await pool.getConnection();
 
@@ -343,8 +350,8 @@ app.post("/api/checkout", async (req, res) => {
     const orderType = deliveryAddress ? "Delivery" : "Takeaway";
 
     const [orderResult] = await connection.query(
-      `INSERT INTO Orders (order_number, staff_id, order_type, total_amount, order_status, customer_phone, delivery_address) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO Orders (order_number, staff_id, order_type, total_amount, order_status, customer_phone, delivery_address, customer_id) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderNumber,
         staffId,
@@ -353,6 +360,7 @@ app.post("/api/checkout", async (req, res) => {
         "Pending",
         customerPhone || null,
         deliveryAddress || null,
+        userId || null,
       ],
     );
 
@@ -662,14 +670,19 @@ app.post("/api/admin/staff/update-password", verifyToken, async (req, res) => {
 });
 
 // ── CUSTOMER PROFILE ──
-app.get("/api/customer/history/:phone", async (req, res) => {
+app.get("/api/customer/history/:identifier", async (req, res) => {
   try {
+    const identifier = req.params.identifier;
+    
+    // Check if identifier is a number (ID) or looks like a phone number
     const [orders] = await pool.query(
       `
             SELECT order_id, order_number, total_amount, order_status as status, rejection_reason, created_at
-            FROM Orders WHERE customer_phone = ? ORDER BY created_at DESC LIMIT 10
+            FROM Orders 
+            WHERE customer_id = ? OR customer_phone = ? 
+            ORDER BY created_at DESC LIMIT 10
         `,
-      [req.params.phone],
+      [identifier, identifier],
     );
 
     for (let order of orders) {

@@ -4,9 +4,11 @@ const API_URL = import.meta.env.VITE_API_URL;
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart, addToCart, subtotal, totalItems, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const [paymentTab, setPaymentTab] = useState('cod'); 
@@ -86,7 +88,8 @@ const Cart = () => {
           total: finalTotal,
           method: paymentTab,
           customerPhone: phone,
-          deliveryAddress: `${specificAddress}, ${selectedLocation.area_name}`
+          deliveryAddress: `${specificAddress}, ${selectedLocation.area_name}`,
+          userId: user?.id || null // Link to registered user if logged in
         }),
       });
       
