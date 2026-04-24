@@ -21,7 +21,8 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    phone: ""
   });
 
   const handleChange = (e) => {
@@ -105,18 +106,33 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {!isLoginMode && (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest ml-1">Full Name</label>
-              <input
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="John Doe"
-                required
-                className="w-full rounded-xl border-2 border-black bg-white px-5 py-3.5 text-black font-bold outline-none focus:bg-zinc-50 transition-colors"
-              />
-            </div>
+            <>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1">Full Name</label>
+                <input
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="John Doe"
+                  required
+                  className="w-full rounded-xl border-2 border-black bg-white px-5 py-3.5 text-black font-bold outline-none focus:bg-zinc-50 transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1">Phone Number</label>
+                <input
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="03XXXXXXXXX"
+                  required
+                  className="w-full rounded-xl border-2 border-black bg-white px-5 py-3.5 text-black font-bold outline-none focus:bg-zinc-50 transition-colors"
+                />
+              </div>
+            </>
           )}
 
           <div className="flex flex-col gap-1.5">

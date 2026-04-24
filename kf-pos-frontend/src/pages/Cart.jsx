@@ -13,7 +13,7 @@ const Cart = () => {
   
   const [paymentTab, setPaymentTab] = useState('cod'); 
   const [isPaying, setIsPaying] = useState(false);
-  const [phone, setPhone] = useState(localStorage.getItem('kf_phone') || ''); 
+  const [phone, setPhone] = useState(user?.phone || localStorage.getItem('kf_phone') || ''); 
   const [specificAddress, setSpecificAddress] = useState(localStorage.getItem('kf_address') || '');
   const [selectedLocation, setSelectedLocation] = useState(JSON.parse(localStorage.getItem('kf_location')) || null);
   const [locations, setLocations] = useState([]);
@@ -27,6 +27,11 @@ const Cart = () => {
 
   const deliveryFee = selectedLocation ? selectedLocation.delivery_fee : 0;
   const finalTotal = subtotal + deliveryFee;
+  useEffect(() => {
+    if (user?.phone) {
+      setPhone(user.phone);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchLocations = async () => {

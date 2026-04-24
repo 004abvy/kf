@@ -200,8 +200,8 @@ app.post("/api/auth/signup", async (req, res) => {
 
     // Using plain text password as requested
     const [result] = await pool.query(
-      `INSERT INTO Staff (full_name, gmail, password, role_id) VALUES (?, ?, ?, ?)`,
-      [name, email, password, roleId],
+      `INSERT INTO Staff (full_name, gmail, password, role_id, phone) VALUES (?, ?, ?, ?, ?)`,
+      [name, email, password, roleId, phone || null],
     );
     
     res.status(201).json({ success: true, message: "Signup successful", userId: result.insertId });
@@ -240,7 +240,8 @@ app.post("/api/auth/login", async (req, res) => {
       user: { 
         id: staff[0].staff_id,
         name: staff[0].full_name, 
-        role: staff[0].role_name.toLowerCase() // Ensure role is lowercase for frontend matching
+        role: staff[0].role_name.toLowerCase(), // Ensure role is lowercase for frontend matching
+        phone: staff[0].phone
       },
     });
   } catch (error) {
