@@ -27,6 +27,8 @@ const AdminDashboard = () => {
   const [newPassword, setNewPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [orderDate, setOrderDate] = useState('');
 
   // Colors for the Pie Chart
   const COLORS = ['#000000', '#FBBF24']; // Black and Yellow
@@ -129,7 +131,11 @@ const AdminDashboard = () => {
   const fetchRecentOrders = async () => {
     try {
       const token = localStorage.getItem('kf_token');
-      const res = await fetch(`${API_URL}/api/admin/recent-orders`, {
+      const queryParams = new URLSearchParams();
+      if (orderSearch) queryParams.append('search', orderSearch);
+      if (orderDate) queryParams.append('date', orderDate);
+
+      const res = await fetch(`${API_URL}/api/admin/recent-orders?${queryParams.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -140,6 +146,10 @@ const AdminDashboard = () => {
       console.error("Recent orders fetch error:", err);
     }
   };
+
+  useEffect(() => {
+    fetchRecentOrders();
+  }, [orderSearch, orderDate]);
 
   useEffect(() => {
     fetchStats();
@@ -212,46 +222,80 @@ const AdminDashboard = () => {
 
       {/* ── RECENT GLOBAL ORDERS ── */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[3rem] border-4 border-black p-8 lg:p-12 mb-16 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-        <div className="flex justify-between items-center mb-10">
-          <h3 className="text-3xl font-black uppercase tracking-tighter">Recent Global Orders</h3>
-          <span className="text-[10px] font-black uppercase bg-black text-white px-4 py-2 rounded-full">All Channels</span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+          <div>
+            <h3 className="text-3xl font-black uppercase tracking-tighter">Recent Global Orders</h3>
+            <span className="text-[10px] font-black uppercase bg-black text-white px-4 py-2 rounded-full mt-2 inline-block">All Channels</span>
+          </div>
+          
+          <div className="flex flex-wrap gap-4 w-full md:w-auto">
+            <div className="relative flex-1 md:flex-none">
+              <input 
+                type="text" 
+                placeholder="Search Order ID..." 
+                value={orderSearch}
+                onChange={(e) => setOrderSearch(e.target.value)}
+                className="w-full md:w-64 bg-gray-50 border-2 border-black rounded-xl px-4 py-2 text-xs font-bold outline-none focus:bg-yellow-50 transition-colors"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            </div>
+            
+            <input 
+              type="date" 
+              value={orderDate}
+              onChange={(e) => setOrderDate(e.target.value)}
+              className="bg-gray-50 border-2 border-black rounded-xl px-4 py-2 text-xs font-black uppercase outline-none focus:bg-yellow-50 transition-colors"
+            />
+            
+            {(orderSearch || orderDate) && (
+              <button 
+                onClick={() => { setOrderSearch(''); setOrderDate(''); }}
+                className="text-[10px] font-black uppercase bg-red-100 text-red-600 px-4 py-2 rounded-xl hover:bg-red-600 hover:text-white transition-all"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b-4 border-black text-[10px] font-black uppercase tracking-widest text-gray-400">
-                <th className="px-4 py-6">Order #</th>
-                <th className="px-4 py-6">Customer</th>
-                <th className="px-4 py-6">Address</th>
-                <th className="px-4 py-6">Total</th>
-                <th className="px-4 py-6 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y-2 divide-gray-100">
-              {recentOrders.map((order) => (
-                <tr key={order.order_id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-6 font-mono font-black">#{order.order_number.slice(-6)}</td>
-                  <td className="px-4 py-6">
-                    <p className="font-bold uppercase text-xs">{order.customer_name || 'Guest'}</p>
-                    <p className="text-[10px] font-bold text-gray-400">{order.customer_phone}</p>
-                  </td>
-                  <td className="px-4 py-6 text-xs font-bold text-gray-500 max-w-[200px] truncate">{order.delivery_address || 'Takeaway'}</td>
-                  <td className="px-4 py-6 font-black">{order.total_amount.toLocaleString()} PKR</td>
-                  <td className="px-4 py-6 text-right">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                      order.status === 'Completed' ? 'bg-green-100 text-green-700' : 
-                      order.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
+
+        <div className="overflow-hidden border-2 border-gray-100 rounded-3xl">
+          <div className="max-h-[500px] overflow-y-auto no-scrollbar">
+            <table className="w-full text-left">
+              <thead className="sticky top-0 bg-white z-10 shadow-sm">
+                <tr className="border-b-4 border-black text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  <th className="px-6 py-6 bg-white">Order #</th>
+                  <th className="px-6 py-6 bg-white">Customer</th>
+                  <th className="px-6 py-6 bg-white">Address</th>
+                  <th className="px-6 py-6 bg-white">Total</th>
+                  <th className="px-6 py-6 text-right bg-white">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {recentOrders.length === 0 && (
-            <div className="p-20 text-center font-black uppercase text-gray-300 tracking-widest">No orders found</div>
-          )}
+              </thead>
+              <tbody className="divide-y-2 divide-gray-100">
+                {recentOrders.map((order) => (
+                  <tr key={order.order_id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-6 font-mono font-black">#{order.order_number.slice(-6)}</td>
+                    <td className="px-6 py-6">
+                      <p className="font-bold uppercase text-xs">{order.customer_name || 'Guest'}</p>
+                      <p className="text-[10px] font-bold text-gray-400">{order.customer_phone}</p>
+                    </td>
+                    <td className="px-6 py-6 text-xs font-bold text-gray-500 max-w-[200px] truncate">{order.delivery_address || 'Takeaway'}</td>
+                    <td className="px-6 py-6 font-black">{order.total_amount.toLocaleString()} PKR</td>
+                    <td className="px-6 py-6 text-right">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                        order.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                        order.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {recentOrders.length === 0 && (
+              <div className="p-20 text-center font-black uppercase text-gray-300 tracking-widest">No orders found</div>
+            )}
+          </div>
         </div>
       </motion.div>
 
